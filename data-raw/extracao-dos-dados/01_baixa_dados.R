@@ -1,0 +1,258 @@
+library(microdatasus)
+library(dplyr)
+library(janitor)
+library(data.table)
+library(stringr)
+library(tidyr)
+library(data.table)
+library(future)
+library(future.apply)
+
+# Baixando todos os dados necessários (com paralelização) ---------------------
+## Criando o planejamento dos futures
+plan(multisession)
+
+## Criando uma função que baixa todos os dados necessários para um certo ano
+processa_ano <- function(ano) {
+  # Carrega os pacotes dentro da worker
+  library(microdatasus)
+  library(dplyr)
+  library(data.table)
+  library(stringr)
+
+  # Criando uma função para criar as coluna de "ano" e "mes" em bases do SIM e SINASC
+  extrai_mes <- function(data, n = 4) {
+    as.numeric(substr(data, 3, 4))
+  }
+
+  extrai_ano <- function(data, n = 4) {
+    as.numeric(substr(data, nchar(data) - n + 1, nchar(data)))
+  }
+
+  # Criando uma função genérica para baixar dados pelo microdatasus
+  baixa_dados <- function(ano, sistema, local_col = NA, data_col = NA) {
+    if (sistema != "SIH-RD") {
+      df <- fetch_datasus(
+        year_start = ano,
+        year_end = ano,
+        month_start = 1,
+        month_end = 12,
+        information_system = sistema
+      )
+    } else {
+      df <- fetch_datasus(
+        year_start = ano,
+        year_end = ano,
+        month_start = 1,
+        month_end = 12,
+        information_system = sistema,
+        vars = c("MES_CMPT", "ANO_CMPT", "CNES", "MUNIC_MOV", "NAT_JUR")
+      )
+    }
+
+    if (sistema != "SIH-RD") {
+      df <- df |>
+        filter(
+          .data[[local_col]] == "1"
+        ) |>
+        mutate(
+          mes = extrai_mes(.data[[data_col]]),
+          ano = extrai_ano(.data[[data_col]])
+        )
+    } else {
+      df <- df |>
+        mutate(
+          mes = as.numeric(MES_CMPT),
+          ano = as.numeric(ANO_CMPT),
+          CNES = as.numeric(CNES),
+          MUNIC_MOV = as.numeric(MUNIC_MOV)
+        )
+    }
+
+    df
+  }
+
+  message("Processando ano ", ano)
+
+  # Baixando os dados do CNES-LT para o dado ano
+  df_cnes_lt_raw <- microdatasus::fetch_datasus(
+    year_start = ano,
+    year_end = ano,
+    month_start = 1,
+    month_end = 12,
+    information_system = "CNES-LT",
+    vars = c("CNES", "CODUFMUN", "COMPETEN", "NAT_JUR", "CODLEITO", "QT_EXIST", "QT_SUS", "QT_NSUS")
+  ) |>
+    mutate(CNES = as.numeric(CNES), CODUFMUN = as.numeric(CODUFMUN))
+
+  # Baixando os dados do SIH-RD para o dado ano
+  df_sih_rd <- baixa_dados(ano, "SIH-RD") |>
+    group_by(CNES, CODUFMUN = MUNIC_MOV, NAT_JUR, mes, ano) |>
+    summarise(.groups = "drop")
+
+  # Criando um dataframe com o total de leitos de UTI por mês/ano em cada hospital
+  df_cnes_leitos_aux1 <- df_cnes_lt_raw |>
+    mutate(
+      ano = as.numeric(substr(COMPETEN, 1, 4)),
+      mes = as.numeric(substr(COMPETEN, 5, 6))
+    ) |>
+    group_by(CNES, CODUFMUN, mes, ano) |>
+    summarise(
+      # Contando quantos leitos de UTI existiam no dado mês para cada CNES
+      leitos_uti = sum(QT_EXIST[CODLEITO %in% c("74", "75", "76")]),
+      .groups = "drop"
+    ) |>
+    select(CNES, CODUFMUN, mes, ano, leitos_uti)
+
+  # Criando um dataframe com o total de leitos de UTI neonatal por mês/ano em cada hospital
+  df_cnes_leitos_aux2 <- df_cnes_lt_raw |>
+    mutate(
+      ano = as.numeric(substr(COMPETEN, 1, 4)),
+      mes = as.numeric(substr(COMPETEN, 5, 6))
+    ) |>
+    group_by(CNES, CODUFMUN, mes, ano) |>
+    summarise(
+      # Contando quantos leitos de UTI neonatal existiam no dado mês para cada CNES
+      leitos_uti_neonatal = sum(QT_EXIST[CODLEITO %in% c("80", "81", "82")]),
+      .groups = "drop"
+    )
+
+  # Criando um dataframe com o total de leitos obstétricos por mês/ano em cada hospital
+  df_cnes_leitos_aux3 <- df_cnes_lt_raw |>
+    mutate(
+      ano = as.numeric(substr(COMPETEN, 1, 4)),
+      mes = as.numeric(substr(COMPETEN, 5, 6))
+    ) |>
+    group_by(CNES, CODUFMUN, mes, ano) |>
+    summarise(
+      # Contando quantos leitos obstétricos de cada tipo existiam no dado mês para cada CNES
+      leitos_obstetricos = sum(QT_EXIST[CODLEITO %in% c("10", "43")]),
+      leitos_obstetricos_sus = sum(QT_SUS[CODLEITO %in% c("10", "43")]),
+      .groups = "drop"
+    ) |>
+    select(CNES, CODUFMUN, mes, ano, leitos_obstetricos, leitos_obstetricos_sus)
+
+
+  # Classificando cada hospital como público, misto ou privado
+  ## Se aparece no SIH/SUS, é misto ou público
+  df_tipo_sih <- df_sih_rd |>
+    mutate(
+      # Criando uma variável que indica qual era o tipo do hospital naquele mês
+      tipo = case_when(
+        !startsWith(NAT_JUR, "1") ~ "misto",
+        startsWith(NAT_JUR, "1") ~ "publico",
+        is.na(NAT_JUR) ~ "sem_classificacao"
+      )
+    )
+
+  ## Se não aparece, classificar de acordo com NAT_JUR e quantidade de leitos obstétricos não SUS
+  df_tipo_cnes <- df_cnes_lt_raw |>
+    mutate(
+      ano = as.numeric(substr(COMPETEN, 1, 4)),
+      mes = as.numeric(substr(COMPETEN, 5, 6))
+    ) |>
+    group_by(CNES, CODUFMUN, NAT_JUR, mes, ano) |>
+    summarise(
+      # Contando quantos leitos obstétricos de cada tipo existiam no dado mês para cada CNES
+      leitos_obstetricos = sum(QT_EXIST[CODLEITO %in% c("10", "43")]),
+      leitos_obstetricos_sus = sum(QT_SUS[CODLEITO %in% c("10", "43")]),
+      .groups = "drop"
+    ) |>
+    anti_join(df_tipo_sih) |>
+    mutate(
+      # Criando uma variável que indica qual era o tipo do hospital naquele mês
+      tipo = case_when(
+        !startsWith(NAT_JUR, "1") & leitos_obstetricos_sus == 0 ~ "privado",
+        !startsWith(NAT_JUR, "1") & leitos_obstetricos_sus > 0 ~ "misto",
+        startsWith(NAT_JUR, "1") ~ "publico",
+        is.na(NAT_JUR) ~ "sem_classificacao"
+      )
+    ) |>
+    select(!c(leitos_obstetricos, leitos_obstetricos_sus))
+
+  ## Juntando as informações
+  df_cnes_lt_filtrados <- full_join(
+    df_tipo_sih,
+    df_tipo_cnes
+  ) |>
+    left_join(df_cnes_leitos_aux1) |>
+    left_join(df_cnes_leitos_aux2) |>
+    left_join(df_cnes_leitos_aux3) |>
+    mutate(
+      leitos_uti = ifelse(is.na(leitos_uti), 0, leitos_uti),
+      leitos_uti_neonatal = ifelse(is.na(leitos_uti_neonatal), 0, leitos_uti_neonatal),
+      leitos_obstetricos = ifelse(is.na(leitos_obstetricos), 0, leitos_obstetricos),
+      leitos_obstetricos_sus = ifelse(is.na(leitos_obstetricos_sus), 0, leitos_obstetricos_sus)
+    ) |>
+    select(CNES, CODUFMUN, mes, ano, tipo, leitos_obstetricos, leitos_obstetricos_sus, leitos_uti, leitos_uti_neonatal)
+
+  # Baixando os dados do CNES, SINASC e SIM
+  list(
+    df_cnes_lt = df_cnes_lt_filtrados,
+
+    df_sih_rd = df_sih_rd,
+
+    sinasc = baixa_dados(ano, "SINASC", "LOCNASC", "DTNASC") |>
+      filter(as.numeric(IDADEMAE) >= 10 & as.numeric(IDADEMAE) <= 49),
+
+    domat = baixa_dados(ano, "SIM-DOMAT", "LOCOCOR", "DTOBITO") |>
+      mutate(
+        idade = as.numeric(
+          ifelse(
+            IDADE == "999" | is.na(IDADE),
+            99,
+            ifelse(
+              as.numeric(IDADE) >= 400 & as.numeric(IDADE) <= 499,
+              substr(IDADE, 2, 3),
+              0
+            )
+          )
+        )
+      ) |>
+      filter(
+        IDADE >= 10 & IDADE <= 49
+      ),
+
+    dofet = baixa_dados(ano, "SIM-DOFET", "LOCOCOR", "DTOBITO") |>
+      mutate(
+        SEMAGESTAC = as.numeric(SEMAGESTAC),
+        PESO = as.numeric(PESO),
+        GESTACAO = as.character(GESTACAO)
+      ) |>
+      filter(
+        ((GESTACAO != "1" & !is.na(GESTACAO) & GESTACAO != "9") | (SEMAGESTAC >= 22 & SEMAGESTAC != 99)) | (PESO >= 500)
+      ),
+
+    doinf = baixa_dados(ano, "SIM-DOINF", "LOCOCOR", "DTOBITO") |>
+      filter(as.numeric(IDADE) < 228)
+  )
+}
+
+## Criando um vetor com os anos a serem baixados
+anos <- 2018:2023
+
+## Baixando todos os dados
+resultados <- future_lapply(anos, processa_ano)
+
+## Separando-os em objetos diferentes
+df_cnes_lt <- rbindlist(lapply(resultados, `[[`, "df_cnes_lt"), fill = TRUE)
+df_sih_rd <- rbindlist(lapply(resultados, `[[`, "df_sih_rd"), fill = TRUE)
+df_sinasc <- rbindlist(lapply(resultados, `[[`, "sinasc"), fill = TRUE)
+df_domat <- rbindlist(lapply(resultados, `[[`, "domat"), fill = TRUE)
+df_dofet <- rbindlist(lapply(resultados, `[[`, "dofet"), fill = TRUE)
+df_doinf <- rbindlist(lapply(resultados, `[[`, "doinf"), fill = TRUE)
+
+## Criando uma função para salvar os arquivos
+salva_csv_gz <- function(df, nome) {
+  path <- paste0("data-raw/extracao-dos-dados/databases/", nome, "_2018_2023.csv.gz")
+  write.csv(df, gzfile(path), row.names = FALSE)
+}
+
+## Salvando os arquivos
+salva_csv_gz(df_cnes_lt, "df_cnes_lt")
+salva_csv_gz(df_sih_rd, "df_sih_rd")
+salva_csv_gz(df_sinasc, "df_sinasc_nasc_em_hospital")
+salva_csv_gz(df_domat, "df_sim_obito_materno_em_hospital")
+salva_csv_gz(df_dofet, "df_sim_obito_fetal_em_hospital")
+salva_csv_gz(df_doinf, "df_sim_obito_neonatal_em_hospital")
+
