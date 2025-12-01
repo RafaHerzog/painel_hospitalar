@@ -1,0 +1,1328 @@
+/*------------------------------------*\
+  # Tipografia base e utilitários
+\*------------------------------------*/
+
+/* Aplicação da fonte e cor principal */
+body, .content-wrapper, .main-header, .main-sidebar {
+  color: #0A1E3C !important;
+}
+
+/* Tamanhos de fonte para telas grandes */
+.fonte-titulos-pagina         { font-size: 33px !important;  }
+.fonte-destaque-caixas        { font-size: 32px !important;  }
+.fonte-titulos                { font-size: 26px !important;  }
+.fonte-titulos-sobre          { font-size: 21px !important;  }
+.fonte-subtitulos-sobre       { font-size: 19.5px !important;}
+.fonte-muito-grande           { font-size: 18px !important;  }
+.fonte-grande                 { font-size: 16px !important;  }
+.fonte-semi-grande            { font-size: 15px !important;  }
+.fonte-media                  { font-size: 14px !important;  }
+.fonte-aviso                  { font-size: 13px !important;  }
+.fonte-pequena                { font-size: 11px !important;  }
+
+/* Ajustes para telas pequenas */
+@media (max-width: 1920px) {
+  .fonte-titulos-pagina       { font-size: 29.7px !important; }
+  .fonte-destaque-caixas      { font-size: 28.8px !important; }
+  .fonte-titulos              { font-size: 23.4px !important; }
+  .fonte-titulos-sobre        { font-size: 18.9px !important; }
+  .fonte-subtitulos-sobre     { font-size: 17.5px !important; }
+  .fonte-muito-grande         { font-size: 16.2px !important; }
+  .fonte-grande               { font-size: 14.4px !important; }
+  .fonte-semi-grande          { font-size: 13.5px !important; }
+  .fonte-media                { font-size: 12.6px !important; }
+  .fonte-aviso                { font-size: 11.7px !important; }
+  .fonte-pequena              { font-size: 9.9px  !important; }
+}
+
+@media (max-width: 1280px) {
+  .fonte-titulos-pagina       { font-size: 26.4px !important; }
+  .fonte-destaque-caixas      { font-size: 25.6px !important; }
+  .fonte-titulos              { font-size: 20.8px !important; }
+  .fonte-titulos-sobre        { font-size: 16.8px !important; }
+  .fonte-subtitulos-sobre     { font-size: 15.6px !important; }
+  .fonte-muito-grande         { font-size: 14.4px !important; }
+  .fonte-grande               { font-size: 12.8px !important; }
+  .fonte-semi-grande          { font-size: 12px !important;   }
+  .fonte-media                { font-size: 11.2px !important; }
+  .fonte-aviso                { font-size: 10.4px !important; }
+  .fonte-pequena              { font-size: 8.8px  !important; }
+}
+
+:root {
+  --fonte-grande-size: 16px;
+  --fonte-semi-grande-size: 15px;
+  --fonte-media-size: 14px;
+  --fonte-pequena-size: 11px;
+}
+
+@media (max-width: 1920px) {
+  :root {
+    --fonte-grande-size: 14.4px;
+    --fonte-semi-grande-size: 13.5px;
+    --fonte-media-size: 12.6px;
+    --fonte-pequena-size: 9.9px;
+  }
+}
+
+@media (max-width: 1280px) {
+  :root {
+    --fonte-grande-size: 12.8px;
+    --fonte-semi-grande-size: 12px;
+    --fonte-media-size: 11.2px;
+    --fonte-pequena-size: 8.8px;
+  }
+}
+
+
+.content-wrapper>.content {
+  padding: 10px;
+}
+
+.content-wrapper {
+  background-color: #fbfbfd;
+}
+
+/* Div fixo no topo como placeholder */
+.div-placeholder {
+  position: sticky;
+  top: 63px;
+  height: fit-content;
+  background-color: #EAF5FF;
+  border-bottom: 1px solid rgba(10, 30, 60, 0.2);
+  border-radius: 4px;
+  padding-top: 15px;
+  z-index: 100;
+  margin-top: -20px;
+  padding-bottom: 5px;
+  padding-left: 1.4rem;
+  padding-right: 1.4rem;
+}
+
+
+/*------------------------------------*\
+  # Navbar
+\*------------------------------------*/
+
+.navbar-brand-fake {
+  font-weight: 600;
+  color: white !important;
+  padding-left: 1rem;
+  padding-right: 2rem;
+  white-space: nowrap;
+
+  transform: translateX(-20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+
+.navbar-img {
+  height: 40px;
+  margin-right: 8px;
+  vertical-align: middle;
+  position: absolute;
+  top: 10px;
+  right: 1%;
+}
+
+@media (min-width: 1200px) {
+  .navbar-img {
+    display: none;
+  }
+}
+
+@media (max-width: 992px) {
+  .navbar-img {
+    height: 35px;
+  }
+}
+
+.navbar-show-title .navbar-brand-fake {
+  display: inline-block;
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.main-header .navbar-nav {
+  margin-left: -320px;
+  transition: margin-left 0.5s ease;
+}
+
+.navbar-show-title .navbar-nav {
+  margin-left: 0;
+}
+
+.navbar-primary {
+  position: sticky;
+  top: 0px;
+}
+
+.navbar-primary,
+.bg-primary,
+.brand-link,
+.main-header.navbar {
+  background-color: #0A1E3C !important;
+}
+
+.navbar {
+  padding: 0.7rem 0.5rem;
+}
+
+.brand-link .brand-image {
+  margin-left: 0.5rem;
+}
+
+.brand-link {
+  color: white !important;
+}
+
+.nav-link {
+  background-color: #0A1E3C !important;
+  color: grey;
+}
+
+.layout-navbar-fixed .wrapper .brand-link {
+    width: inherit !important;
+}
+
+
+/*------------------------------------*\
+  # Navbar tabs
+\*------------------------------------*/
+
+.navbar-nav .nav-item {
+  transform: translateY(-10%);
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgb(255 255 255 / 80%);
+}
+
+.navbar-nav.sidebar-menu .nav-link {
+  font-weight: 500;
+  padding: .5rem 1rem;
+  position: relative;
+  opacity: 0.9;
+  transition: all 0.1s ease-in-out;
+}
+
+/* 1. Barra animada: só para links que NÃO têm submenu (não são .dropdown) */
+.navbar-nav.sidebar-menu .nav-item:not(.dropdown) > .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: -2px;
+  height: 2px;
+  background-color: white;
+  opacity: 0;
+  transform: scaleX(0);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover mantém a animação da barra */
+.navbar-nav.sidebar-menu > .nav-item:not(.dropdown) > .nav-link:hover {
+  transform: scale(1.05);
+  color: white;
+}
+.navbar-nav.sidebar-menu > .nav-item > .nav-link:hover::after {
+  opacity: 1;
+  transform: scaleX(1.05);
+}
+
+.navbar-nav.sidebar-menu > .nav-item.dropdown > .nav-link:hover {
+  transform: scale(1.05);
+  color: white;
+}
+.navbar-nav.sidebar-menu .nav-item.dropdown.show > .nav-link {
+  transform: scale(1.05);
+  color: white;
+  opacity: 1;
+}
+
+/* Sempre mantém scale 1.05 se o dropdown estiver ativo (hover ou show) */
+.navbar-nav.sidebar-menu .nav-item.dropdown:hover > .nav-link,
+.navbar-nav.sidebar-menu .nav-item.dropdown.show > .nav-link {
+  transform: scale(1.05);
+  color: white;
+  opacity: 1;
+  transition: all 0.1s ease;
+}
+
+/* ESTADO ATIVO: mantém a barra e zoom só nos itens sem dropdown */
+.navbar-nav.sidebar-menu .nav-item:not(.dropdown).active > .nav-link[href="#shiny-tab-visao_geral"],
+.navbar-nav.sidebar-menu .nav-link[href="#shiny-tab-visao_geral"].active {
+  color: white;
+  font-weight: 600;
+  transform: scale(1.05);
+  opacity: 1;
+  transition: all 0.1s ease;
+}
+
+:not(#tab-visao_geral) .navbar-nav.sidebar-menu .nav-link.active {
+  font-weight: 600;
+  opacity: 1;
+  transition: all 0.1s ease;
+}
+
+.navbar-nav.sidebar-menu .nav-item:not(.dropdown) > .nav-link[href="#shiny-tab-visao_geral"].active::after {
+  opacity: 1;
+  transform: scaleX(1.05);
+}
+
+
+/* 2. Setinha: somente para o item que tem submenu */
+.navbar .dropdown-menu {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s ease;
+  display: block;
+  pointer-events: none;
+}
+
+.navbar .dropdown.show > .dropdown-menu,
+.navbar .dropdown-submenu.show > .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* corrige posição dos submenus */
+.navbar .dropdown-submenu {
+  position: relative;
+}
+
+.navbar .dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-left: .1rem;
+  margin-right: .1rem;
+}
+
+.navbar-nav.sidebar-menu .nav-item.dropdown > .nav-link:hover::after {
+  color: white;                  /* fica branca no hover, igual ao texto */
+}
+
+.navbar-nav.sidebar-menu .nav-item.dropdown > .nav-link {
+  font-weight: normal;
+  color: /* cor padrão */;
+  transform: none;
+  opacity: 0.8;
+  transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out, color 0.1s ease-in-out, font-weight 0.1s ease-in-out;
+}
+
+/* Adiciona apenas quando algum item filho está ativo (dropdown “ativo”) */
+.navbar-nav.sidebar-menu .nav-item.dropdown:has(.nav-link.active) > .nav-link {
+  color: white !important;
+  font-weight: 600 !important;
+  transform: scale(1.05) !important;
+  opacity: 1 !important;
+  transition: opacity 0.1s ease-in-out !important;
+}
+
+/* Dropdown */
+.navbar-nav.sidebar-menu .dropdown-menu {
+  background-color: #0A1E3C;
+  border-radius: 6px;
+  padding: 0.5rem 0;
+  min-width: max-content;
+  z-index: 1050;
+  border: none;
+}
+
+/* Subitens do dropdown */
+.navbar-nav.sidebar-menu .dropdown-menu .nav-link {
+  padding: 0.5rem 1.75rem;
+  line-height: 1.5;
+  font-weight: 500;
+  color: white !important;
+  background-color: transparent;
+  border: none;
+  white-space: nowrap;
+}
+
+/* Ao passar o mouse sobre o item do dropdown, aumenta opacidade */
+.navbar-nav.sidebar-menu .dropdown-menu .nav-link:hover {
+  opacity: 1 !important;
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* Define opacidade inicial dos links para 0.8 (ou menos, se quiser) */
+.navbar-nav.sidebar-menu .dropdown-menu .nav-link {
+  opacity: 0.8;
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* Quando o dropdown pai tiver um filho ativo, destaque o link de 1º nível */
+.navbar-nav.sidebar-menu .nav-item.dropdown.has-active-child > .nav-link {
+  transform: scale(1.05);
+  color: white !important;
+  opacity: 1;
+  font-weight: 600;
+  transition: all 0.1s ease;
+}
+
+
+/*------------------------------------*\
+  # Sidebar
+\*------------------------------------*/
+
+/* Definindo o estilo do span que recebe o nome do painel */
+.span-titulo {
+  color: white;
+  padding-left: 0.5rem;
+  padding-right: 2rem;
+}
+
+@media (max-width: 768px) {
+  .span-titulo {
+    padding-left: 0.5rem;
+  }
+}
+
+/* Aumentando o padding dos nav-items */
+.navbar-expand .navbar-nav .nav-link {
+  padding-left: 2.8rem;
+  padding-right: 2.8rem;
+}
+
+/* Retirando a sidebar para telas maiores */
+@media (min-width: 993px) {          /* ≥ 1200px */
+  .main-sidebar,
+  .brand-link               { display: none !important; }
+  /* remove o recuo do conteúdo */
+  .content-wrapper,
+  .main-header,
+  .main-footer              { margin-left: 0 !important; }
+
+  body > div.wrapper > nav > ul:nth-child(1) {
+    display: none;
+  }
+}
+
+/* Retirando os itens da navbar para telas menores */
+@media (max-width: 992px) {
+  body > div.wrapper > nav > ul.navbar-nav.sidebar-menu {
+    display: none;
+  }
+
+  .navbar-expand .navbar-nav .nav-link {
+    padding-left: 0.5rem;
+    padding-right: 0rem;
+  }
+}
+
+
+/* Links principais */
+.nav-sidebar .nav-link {
+  background-color: white !important;
+  color: #0A1E3C !important;
+  border-radius: 5px;
+}
+
+.nav-sidebar .nav-link.active,
+.nav-sidebar .nav-link:hover {
+  background-color: #0A1E3C !important;
+  color: white !important;
+}
+
+
+/*------------------------------------*\
+  # Filtros com acordeão
+\*------------------------------------*/
+
+.accordion-header-container {
+  transition: opacity 0.3s ease;
+  opacity: 1;
+  cursor: pointer;
+}
+
+.accordion-header {
+  font-weight: 600;
+  transition: color 0.3s ease;
+  color: #0A1E3C; /* cor padrão aberta */
+}
+
+/* Cor quando a sanfona está fechada: #0A1E3C + 30% branco */
+.accordion-header-container.closed .accordion-header {
+  color: rgba(10, 30, 60, 0.8); /* alpha controla intensidade sobre o fundo branco */
+}
+
+.accordion-header-container:hover .accordion-header {
+  color: #0A1E3C;
+}
+
+.accordion-header-container:hover {
+  transform: translateY(-1.5px);           /* sobe levemente */
+  transition: transform 0.3s ease;
+}
+
+.accordion-body {
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: -14px;
+  background-color: rgba(0, 0, 0, 0.025);
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 0 1px rgba(0, 0, 0, .1), 0 1px 3px rgba(0, 0, 0, .15);
+}
+
+.accordion-icon {
+  color: #32A0FF; margin-right: 4px;
+  display: inline-flex;
+  transition: transform 0.35s ease !important;
+}
+
+.accordion-icon.closed {
+  transform: rotate(180deg);
+}
+
+
+/*------------------------------------*\
+  # ValueBoxes
+\*------------------------------------*/
+
+.small-box {
+  margin-bottom: 10px !important;
+  text-align: left;
+}
+
+.small-box .icon>i.fas {
+  font-size: 2.5rem !important;
+  color: rgb(10 30 60 / 20%) !important;
+}
+
+.small-box:hover .icon>i, .small-box:hover .icon>i.fas {
+  transform: scale(1);
+}
+
+/* Container da valueBox */
+/* container padrão (sem gráfico) já é flex */
+.value-box-custom {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* ícone inline normal (sem gráfico) */
+.value-box-custom .icone-valuebox {
+  flex: 0 0 50px;
+  font-size: 2rem;
+  color: #32A0FF;
+}
+
+/* quando há gráfico, o contêiner vira relativo e o ícone flutua */
+.value-box-custom.has-widget { position: relative; }
+.value-box-custom.has-widget .icone-flutuante {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  z-index: 2;
+}
+.value-box-custom.has-widget .icone-flutuante i {
+  font-size: 1.8rem;
+  color: rgb(10 30 60 / 20%) !important;
+}
+
+/* conteúdo ocupa toda a largura quando não há ícone à esquerda */
+.value-box-custom .value-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* opcional: margem extra no título quando há gráfico */
+.value-title.has-widget { margin-bottom: 10px; }
+
+/* se o htmlwidget precisar, garanta largura total dentro da box */
+.vb-conteudo-grafico .html-widget,
+.vb-conteudo-grafico .highchart {
+  width: 100% !important;
+}
+
+
+
+/* Tirando o crescimento do ícone ao hover da caixinha */
+.small-box:hover .icone-valuebox {
+  transform: scale(1);
+}
+
+.fonte-nome-hospital {
+  font-size: 50px;
+  font-weight: 600;
+  line-height: 1.2em;
+  max-height: 3.6em; /* 1.2em * 3 linhas */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* limita a 3 linhas */
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  word-break: break-word; /* permite quebra de palavra se necessário */
+}
+
+@media (min-width: 2300px) {
+  .fonte-nome-hospital {
+    padding-top: 5px;
+  }
+}
+
+
+/* Coluna da direita: título e conteúdo */
+.value-box-custom.has-widget .value-text {
+  flex: 1;
+  max-width: 100%; /* ícone + gap */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.value-box-custom .value-text {
+  flex: 1;
+  max-width: calc(100% - 50px - 20px); /* ícone + gap */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Título normal (sem gráfico) */
+.value-box-custom .value-title {
+  font-weight: normal;
+  color: #0A1E3C;
+  margin: 0;
+  text-align: left;
+}
+
+/* Quando há um gráfico abaixo, dá mais respiro */
+.value-box-custom .value-title.has-widget {
+  margin-bottom: 17px; /* ajustável conforme a altura desejada */
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+/* Conteúdo */
+.value-box-custom .value-content {
+  font-weight: bold;
+  color: #0A1E3C;
+  margin: 0;
+  text-align: left;
+}
+
+/* Remove o footer das valueBoxes */
+.small-box .small-box-footer {
+  display: none !important;
+}
+
+.small-box>.inner {
+  padding: 5px;
+}
+
+/* Aumenta o padding das caixinhas */
+.small-box {
+  padding: 20px !important;
+  background-color: #FCFCFD !important;
+}
+
+#visao_geral_1-vb_hospital .small-box {
+  position: relative;
+  min-height: 225px;
+}
+
+#visao_geral_1-vb_hospital .small-box .value-box-custom {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 30px; /* mantém gap do ícone/texto */
+  right: 30px;
+}
+
+#visao_geral_1-vb_natureza .small-box {
+  min-height: 225px;
+  display: grid;
+  align-items: center;
+}
+
+#visao_geral_1-vb_categoria .small-box {
+  min-height: 225px;
+  display: grid;
+  align-items: center;
+}
+
+
+/*------------------------------------*\
+  # Ajustes em colunas e cards
+\*------------------------------------*/
+
+.card-body, .card {
+  overflow: visible;
+}
+
+/* Cor do background dos títulos dos cards */
+.card-header {
+  background-color: #0A1E3C !important;
+  color: white !important;
+}
+
+#card-filters .card-header {
+  position: sticky;
+  z-index: 95;
+}
+
+@media (max-width: 1280px) {
+  #card-filters {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+}
+
+#card-filters .card-body {
+  max-height: calc(100dvh - 330px);
+  overflow-y: auto;
+  padding: 1.25rem 1rem 1rem 1rem;
+  transition: max-height 0.4s ease;
+  margin-top: 10px;
+}
+
+.navbar-show-title #card-filters .card-body {
+  max-height: calc(100dvh - 320px);
+}
+
+@media (min-width: 2560px) {
+  .navbar-show-title #card-filters .card-body {
+    max-height: calc(100dvh - 240px);
+  }
+}
+
+@media (max-width: 1200px) {
+  #card-filters .card-body,
+  .navbar-show-title #card-filters .card-body {
+    max-height: none;
+  }
+}
+
+@media (max-width: 1200px) {
+  .div-padding-tela-menor {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem
+  }
+}
+
+.conditional-sticky {
+  position: sticky;
+  top: 146px !important;
+}
+
+@media (max-width: 1920px) {
+  .conditional-sticky {
+    top: 143px !important;
+  }
+}
+
+@media (max-width: 1280px) {
+  .conditional-sticky {
+    top: 138px !important;
+  }
+}
+
+.div-corta-card {
+  position: sticky;
+  left: 0;
+  width: 101.5%;
+  margin-left: -2px;
+  height: 25px;
+  z-index: 99;
+  pointer-events: none;
+  background: #fbfbfd;
+}
+
+@media (max-width: 1200px) {
+  .sem-div-corta-card {
+    display: none;
+  }
+}
+
+.row-visualizations {
+  padding-top: 25px;
+}
+
+@media (max-width: 1200px) {
+  .row-visualizations {
+    margin-left: -7.5px;
+    margin-right: -7.5px;
+  }
+}
+
+.card-footer {
+  border-top: 1px solid #dee2e6;
+  background-color: rgba(10, 30, 60, 0.03) !important;
+  padding: 0.75rem 1rem;
+}
+
+.card {
+  margin-bottom: 0rem !important;
+}
+
+.custom-guideline-box {
+  border-left: 2px solid #0A1E3C;
+  padding-left: 15px;
+  margin-left: 18px;
+}
+
+/*------------------------------------*\
+  # SelectizeInput
+\*------------------------------------*/
+
+/* Esconde o cursor de digitação apenas para os inputs com classe .sem-cursor */
+.selectize-input.sem-cursor input {
+  display: none !important;
+}
+
+/* Dropdown */
+.selectize-dropdown-content .option {
+  background-color: white !important;
+  color: #0A1E3C !important;
+}
+
+.selectize-dropdown-content .active,
+.selectize-dropdown-content .option:hover,
+.selectize-dropdown-content .option:focus {
+  background-color: #0A1E3C !important;
+  color: white !important;
+}
+
+
+/* Input padrão */
+.selectize-control.single .selectize-input {
+  background-color: white !important;
+  color: #0A1E3C !important;
+  border-width: 1px;
+  border-color: rgba(10, 30, 60, 0.4) !important;
+  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.selectize-input>* {
+  padding-right: 5px !important;
+}
+
+.form-control.selectize-control {
+  padding-right: 5px !important;
+}
+
+.selectize-input.focus {
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 4px rgba(10, 30, 60, 0.2) !important;
+  border-color: rgba(10, 30, 60, 0.8) !important;
+  border-width: 1px;
+}
+
+.selectize-control.single .selectize-input:focus {
+  border-color: rgba(10, 30, 60, 0.8) !important;
+  box-shadow: 0 0 4px rgba(10, 30, 60, 0.6) !important;
+  outline: none !important;
+}
+
+.selectize-control.single .selectize-input:hover {
+  box-shadow: 0 0 4px rgba(10, 30, 60, 0.6) !important;
+  border-color: rgba(10, 30, 60, 0.8) !important;
+}
+
+.form-control {
+  font-weight: 500 !important;
+  color: #0A1E3C !important;
+  background-color: white;
+  border-width: 1px;
+  border-color: rgba(10, 30, 60, 0.4) !important;
+}
+
+/* Tamanho da fonte no dropdown */
+.form-control {
+  font-size: var(--fonte-semi-grande-size) !important;
+}
+
+#input_categoria + .selectize-control .selectize-dropdown{
+  top: auto !important;
+  bottom: 100% !important;
+  margin-bottom: 4px;
+}
+
+.vscomp-wrapper {
+  font-weight: 500 !important;
+  font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  color: #0A1E3C !important;
+  background-color: white !important;
+}
+
+.vscomp-wrapper {
+  font-size: var(--fonte-semi-grande-size) !important;
+}
+
+.vscomp-option.group-title .vscomp-option-text {
+    cursor: default;
+    opacity: .7;
+}
+
+.vscomp-option.group-option {
+  height: 45px !important;
+}
+
+.vscomp-toggle-button {
+  color: #0A1E3C !important;
+  background-color: white !important;
+  border-radius: 4px;
+  border-width: 1px;
+  border-color: rgba(10, 30, 60, 0.4) !important;
+  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.vscomp-wrapper.focused .vscomp-toggle-button, .vscomp-wrapper:focus .vscomp-toggle-button {
+  box-shadow: none;
+}
+
+.vscomp-toggle-button:hover {
+  box-shadow: 0 0 4px rgba(10, 30, 60, 0.6) !important;
+  border-color: rgba(10, 30, 60, 0.8) !important;
+}
+
+.vscomp-option-text {
+  white-space: normal;
+  color: #0A1E3C !important;
+}
+
+.vscomp-options-list {
+  max-height: 300px !important;
+}
+
+.vscomp-value {
+  white-space: normal;
+}
+
+.vscomp-wrapper.multiple .vscomp-option.selected .checkbox-icon::after {
+  border-color: #0A1E3C;
+  border-left-color: rgba(0, 0, 0, 0);
+  border-top-color: rgba(0, 0, 0, 0);
+}
+
+/* hover geral */
+.vscomp-option:hover,
+.vscomp-option.vscomp-option--highlight {
+  background-color: #0A1E3C !important;
+  color: #FFFFFF !important;
+}
+
+/* texto e ícones internos */
+.vscomp-option:hover *,
+.vscomp-option.vscomp-option--highlight * {
+  color: #FFFFFF !important;
+}
+
+/* bordas do ícone no hover */
+.vscomp-option:hover .checkbox-icon::after,
+.vscomp-option.vscomp-option--highlight .checkbox-icon::after {
+  border-color: #FFFFFF !important;
+}
+
+/* para ícone de item selecionado (checkmark rotacionado) */
+.vscomp-wrapper.multiple .vscomp-option:hover.selected .checkbox-icon::after {
+  border-color: #FFFFFF !important;
+  border-left-color: transparent !important;
+  border-top-color: transparent !important;
+}
+
+
+/*------------------------------------*\
+  # PrettyRadioButtons
+\*------------------------------------*/
+
+.pretty {
+  font-size: var(--fonte-semi-grande-size) !important;
+}
+
+.pretty.p-rotate:not(.p-default) input:checked~.state .icon, .pretty.p-rotate:not(.p-default) input:checked~.state .svg, .pretty.p-rotate:not(.p-default) input:checked~.state img, .pretty.p-rotate:not(.p-default) input:checked~.state label:after, .pretty.p-rotate:not(.p-default) input:checked~.state label:before {
+    animation: rotate .4s linear;
+}
+
+/* Aplica font-weight 500 às labels dos prettyRadioButtons */
+.pretty .state label {
+    font-weight: 500;
+}
+
+.pretty .state label:before {
+    border-color: #0A1E3C;
+}
+
+.shiny-input-checkboxgroup label~.shiny-options-group, .shiny-input-radiogroup label~.shiny-options-group {
+    padding: 0rem 0.25rem;
+}
+
+.pretty.p-icon input:checked + .state label {
+  font-weight: bold !important;
+}
+
+
+/*------------------------------------*\
+  # Botões de atualizar/redefinir
+\*------------------------------------*/
+.nav-btn {
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all .3s ease !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 100px;
+  padding: 8px 16px;
+}
+
+.btn-atualizar {
+  background-color: #32A0FF !important;
+  color: #fff !important;
+  border: 1.6px solid #fff !important;
+}
+
+.btn-atualizar:hover {
+  background-color: #1e8ae6 !important; /* tom mais escuro */
+  border-color: #1e8ae6 !important;
+}
+
+.btn-redefinir {
+  background-color: #FFFFFF !important;   /* branco puro */
+  color: #0A1E3C !important;             /* texto azul escuro */
+  border: 1.6px solid #E0E0E0 !important; /* borda cinza clara */
+}
+
+.btn-redefinir:hover {
+  background-color: #F0F0F0 !important;   /* cinza bem claro de highlight */
+  border-color: #CFCFCF !important;       /* cinza médio */
+  color: #0A1E3C !important;              /* mantém azul escuro */
+}
+
+
+.btn-atualizar:hover i {
+  transform: rotate(180deg);
+}
+
+.nav-btn i {
+  transition: all .3s ease !important;
+}
+
+.nav-btn:hover:not(.disabled) {
+  transform: translateY(-2px) scale(1.02);
+  filter: brightness(1.05);
+}
+
+
+/*------------------------------------*\
+  # Botões de navegação entre abas
+\*------------------------------------*/
+.div-botoes-cancer {
+  display: flex;
+  justify-content: center;
+  gap: 110px;
+  flex-wrap: wrap;
+  margin-top: 60px;
+  margin: auto;
+}
+
+@media (max-width: 1200px) {
+  .div-botoes-cancer {
+    gap: 30px;
+  }
+}
+
+.circle-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  text-align: center;
+  width: 140px;
+}
+
+.circle-btn .circle-icon {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  padding: 15px;
+  background-color: #f7f7f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circle-btn .circle-icon i {
+  font-size: 2.5rem;
+  color: #32A0FF;
+}
+
+.circle-btn .circle-label {
+  margin-top: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #0A1E3C;
+}
+
+/* Estilo 1 — borda simples */
+.circle-btn-style1 .circle-icon {
+  border: 2px solid #0A1E3C;
+}
+.circle-btn-style1:hover .circle-icon {
+  background-color: #0A1E3C;
+}
+
+
+/* -------------------- EFEITOS GERAIS -------------------- */
+.circle-btn {
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+/* “salta” levemente para fora e fica mais nítido */
+.circle-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  filter: brightness(1.05);
+}
+
+.circle-btn:hover i {
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.disabled-btn {
+  pointer-events: none;
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+
+  /* evita seleção de texto */
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* IE10+ */
+}
+
+
+/*------------------------------------*\
+  # Highcharts
+\*------------------------------------*/
+.highcharts-title {
+  font-size: var(--fonte-grande-size) !important;
+}
+
+.highcharts-subtitle {
+  font-size: var(--fonte-media-size) !important;
+}
+
+.highcharts-axis, .highcharts-legend-item {
+  font-size: var(--fonte-grande-size) !important;
+}
+
+.highcharts-axis-labels {
+  font-size: var(--fonte-semi-grande-size) !important;
+}
+
+.highcharts-data-label text, .highcharts-point text {
+  font-size: var(--fonte-pequena-size) !important;
+}
+
+
+/*------------------------------------*\
+  # Dropdown de filtros
+\*------------------------------------*/
+/* Ícone de filtro */
+.filter-icon {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.filter-icon:hover {
+  color: #d4d4d4;
+}
+
+/* remove foco e borda branca */
+.filter-icon:focus,
+.filter-icon:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* --- Dropdown de filtros --- */
+.filter-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  padding: 10px;
+  display: none;
+  z-index: 9999;
+  width: 270px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.filter-dropdown.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.filter-dropdown.hide {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+/* apenas texto e rótulos, não ícones */
+.filter-dropdown,
+.filter-dropdown label,
+.filter-dropdown span,
+.filter-dropdown input,
+.filter-dropdown select,
+.filter-dropdown textarea {
+  color: #0A1E3C !important;
+}
+
+/* restaura cor dos ícones dos prettyRadioButtons */
+.filter-dropdown .pretty .state i {
+  color: white !important;
+}
+
+.filter-dropdown input,
+.filter-dropdown .form-control,
+.filter-dropdown .vscomp-value,
+.filter-dropdown .picker-input {
+  color: #0A1E3C !important;
+  background-color: #fff !important;
+}
+
+.filter-dropdown ::placeholder {
+  color: #555 !important;
+}
+
+/* remove negrito do label e ajusta margens */
+.filter-dropdown label {
+  font-weight: 400 !important;
+}
+
+/* Dentro do dropdown, todos os <label> viram flex e sem margem inferior */
+.filter-dropdown label {
+  font-weight: 400 !important;
+}
+
+.filter-dropdown .shiny-input-checkboxgroup .form-check-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px;
+  line-height: 1.2 !important;
+}
+
+/* mantém o prettyRadioButtons alinhado corretamente */
+.filter-dropdown .pretty .state label {
+  display: inline-block !important;
+  align-items: center !important;
+  line-height: normal !important;
+  margin-bottom: 0 !important;
+}
+
+.filter-dropdown .pretty .state label:after,
+.filter-dropdown .pretty .state label:before,
+.filter-dropdown .pretty.p-icon .state .icon {
+  top: 0% !important;
+}
+
+/* Garantia extra para os labels dos checkboxes */
+.filter-dropdown .form-check-label {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Margens e padding apenas para checkboxGroupInput */
+.filter-dropdown .shiny-input-checkboxgroup label~.shiny-options-group {
+  margin-top: -3px !important;
+  padding-left: 10px !important;
+}
+
+/* cor da caixinha do checkbox preenchida */
+.filter-dropdown input[type='checkbox'] {
+  accent-color: #0A1E3C !important;
+  transform: translateY(1px);
+}
+
+/* Label do checkboxGroupInput com fonte-grande */
+.filter-dropdown .control-label {
+  font-size: var(--fonte-grande-size) !important;
+}
+.filter-dropdown .control-label.fonte-grande {
+  font-size: inherit !important;
+}
+
+/* Opções (checkboxes) com fonte-semi-grande */
+.filter-dropdown .shiny-options-group,
+.filter-dropdown .shiny-options-group label {
+  font-size: var(--fonte-semi-grande-size) !important;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(-4px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+/* Tooltip lateral customizada */
+.custom-tooltip {
+  position: relative;
+}
+
+.custom-tooltip:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  font-weight: 500;
+  bottom: 120%; /* aparece acima do botão */
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 40px); /* impede de sair da tela */
+  background: #fff;
+  color: #0A1E3C;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  z-index: 10000;
+  opacity: 0;
+  animation: fadeInTooltip 0.3s forwards;
+}
+
+.custom-tooltip:hover::after {
+  font-size: var(--fonte-media-size);
+}
+
+/* pequena setinha apontando para o botão */
+.custom-tooltip:hover::before {
+  content: '';
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translate(-5px, 7px);
+  border: 6px solid transparent;
+  border-top-color: #fff;
+  opacity: 0;
+  animation: fadeInTooltip 0.3s forwards;
+}
+
+/* animação de entrada */
+@keyframes fadeInTooltip {
+  to { opacity: 1; }
+}

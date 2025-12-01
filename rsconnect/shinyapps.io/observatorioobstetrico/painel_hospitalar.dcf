@@ -1,0 +1,12 @@
+name: painel_hospitalar
+title: painel_hospitalar
+username: observatorioobstetrico
+account: observatorioobstetrico
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15998010
+bundleId: 11145880
+url: https://observatorioobstetrico.shinyapps.io/painel_hospitalar/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
