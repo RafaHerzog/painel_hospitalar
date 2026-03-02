@@ -17,17 +17,17 @@ accordionSection <- function(id, title, content_ui, default_open = TRUE, disable
     htmltools::tags$div(
       id = paste0(id, "-header-container"),
       class = header_class,
-      # Sempre adiciona o onclick
-      onclick = sprintf("
-        (function(){
-          var ic = document.getElementById('%s-icon');
-          var container = document.getElementById('%s-header-container');
-          var isClosed = ic.classList.contains('closed');
-          ic.classList.toggle('closed');
-          container.classList.toggle('closed');
-          Shiny.setInputValue('%s_click', isClosed ? 'open' : 'closed', {priority:'event'});
-        })();
-      ", id, id, id),
+      # # Sempre adiciona o onclick
+      # onclick = sprintf("
+      #   (function(){
+      #     var ic = document.getElementById('%s-icon');
+      #     var container = document.getElementById('%s-header-container');
+      #     var isClosed = ic.classList.contains('closed');
+      #     ic.classList.toggle('closed');
+      #     container.classList.toggle('closed');
+      #     Shiny.setInputValue('%s_click', isClosed ? 'open' : 'closed', {priority:'event'});
+      #   })();
+      # ", id, id, id),
 
       # Título + ícone
       htmltools::tags$div(
@@ -38,7 +38,7 @@ accordionSection <- function(id, title, content_ui, default_open = TRUE, disable
           class = icon_class,
           htmltools::HTML("<i class='fa-solid fa-chevron-up chev'></i>")
         ),
-        htmltools::tags$b(title, class = "fonte-muito-grande")
+        htmltools::tags$b(title, class = "fonte-grande")
       ),
 
       # Linha
@@ -66,7 +66,7 @@ hospitalValueBox <- function(titulo, conteudo, icone, class_fonte_conteudo = "fo
   }
 
   outer_class <- if (is_widget) "value-box-custom has-widget" else "value-box-custom"
-  titulo_class <- if (is_widget) "value-title fonte-titulos-sobre has-widget" else "value-title fonte-muito-grande"
+  titulo_class <- if (is_widget) "value-title fonte-titulos-sobre has-widget" else "value-title fonte-media"
 
   bs4Dash::valueBox(
     value = tags$div(
@@ -109,7 +109,7 @@ hospitalValueBoxHospital <- function(nome, local, icone) {
 
 
 valueBoxSpark <- function(value, title, sparkobj = NULL, subtitle, info = NULL,
-                          icon = NULL, color = "aqua", width = 4, href = NULL){
+                          icon = NULL, color = "aqua", width = 4, href = NULL, natureza = "publico"){
 
   shinydashboard:::validateColor(color)
 
@@ -132,11 +132,19 @@ valueBoxSpark <- function(value, title, sparkobj = NULL, subtitle, info = NULL,
     class = paste0("small-box bg-", color),
     div(
       class = "inner",
-      tags$small(title, class = "fonte-muito-grande", style = "color: #0A1E3C;"),
+      tags$small(title, class = "fonte-grande", style = "color: #0A1E3C;"),
       if (!is.null(sparkobj)) info_icon,
-      h3(value, class = "fonte-destaque-caixas", style = "color: #0A1E3C; font-weight: bold;"),
+      if (natureza != "privado") {
+        h3(value, class = "fonte-destaque-caixas", style = "color: #0A1E3C; font-weight: bold;")
+      } else {
+        h3(value, class = "fonte-destaque-caixas", style = "pointer-events: none; color: #FCFCFD; font-weight: bold;")
+      },
       if (!is.null(sparkobj)) sparkobj,
-      p(subtitle, style = "margin-top: 0.5rem; margin-bottom: 0rem;", class = "fonte-media")
+      if (natureza != "privado") {
+        p(subtitle, style = "margin-top: 0.5rem; margin-bottom: 0rem;", class = "fonte-media")
+      } else {
+        p(subtitle, style = "pointer-events: none; color: #FCFCFD; margin-top: 0.5rem; margin-bottom: 0rem;", class = "fonte-media")
+      }
     ),
     # bs3 icon-large
     # bs4 icon
@@ -253,3 +261,109 @@ get_subtitle_variacao <- function(df, coluna) {
 }
 
 
+# Função para criar HTML de um chip de filtro
+create_filter_chip <- function(label, value, input_id, placeholder = "Todos", icon_name = "times") {
+  # Verifica se o valor está vazio
+  vazio <- is.null(value) || value == "" || length(value) == 0
+
+  # Define o texto que será exibido
+  texto_exibido <- if (vazio) placeholder else value
+
+  # Colapsa vetores (múltiplos hospitais)
+  if (length(texto_exibido) > 1) texto_exibido <- paste0(texto_exibido, collapse = ", ")
+
+  tags$div(
+    # Adiciona a classe 'chip-vazio' se não houver seleção
+    class = paste("filter-chip", if (vazio) "chip-vazio"),
+    tags$span(
+      class = "fonte-media",
+      tags$b(class = "filter-chip-label", paste0(label, ":")),
+      texto_exibido
+    ),
+    # Ícone dinâmico com base no argumento icon_name
+    if (!vazio) {
+      tags$span(
+        class = "filter-chip-remove",
+        onclick = sprintf("Shiny.setInputValue('remover_filtro_id', '%s', {priority: 'event'})", input_id),
+        icon(icon_name)
+      )
+    }
+  )
+}
+
+
+# Função 1: Para a Value Box (Título interno do card)
+formatar_lista_variaveis <- function(string_vars) {
+  if (is.na(string_vars) || string_vars == "") return("")
+
+  # Regex: Divide por vírgula OU pela palavra " e " (com espaços em volta)
+  vars <- stringr::str_split(string_vars, ",\\s*|\\s+e\\s+")[[1]] |>
+    stringr::str_trim() |>
+    Filter(f = function(x) x != "") # Remove entradas vazias
+
+  n <- length(vars)
+
+  if (n == 1) {
+    return(paste0("Variável ", string_vars))
+  } else {
+    # Reconstrói a lista padronizada: X, Y e Z
+    texto <- paste(vars[1:(n-1)], collapse = ", ")
+    texto <- paste0(texto, " e ", string_vars[n])
+    return(paste0("Variáveis ", string_vars))
+  }
+}
+
+# Função 2: Para o Título do Gráfico no Modal
+gerar_titulo_modal <- function(string_vars) {
+  if (is.na(string_vars) || string_vars == "") return("Completude da Informação")
+
+  vars <- stringr::str_split(string_vars, ",\\s*|\\s+e\\s+")[[1]] |>
+    stringr::str_trim() |>
+    Filter(f = function(x) x != "")
+
+  n <- length(vars)
+
+  # Reconstrói a lista padronizada para o negrito
+  lista_formatada <- if (n == 1) {
+    vars
+  } else {
+    paste0(paste(vars[1:(n-1)], collapse = ", "), " e ", vars[n])
+  }
+
+  # Ajuste fino de concordância
+  prefixo <- if (n == 1) "com a variável" else "com as variáveis"
+  sufixo  <- if (n == 1) "adequadamente preenchida" else "adequadamente preenchidas"
+
+  return(paste0("Porcentagem de declarações de nascidos vivos ", prefixo, " <b>", lista_formatada, "</b> ", sufixo))
+}
+
+# Função 3: Para a Nota de Rodapé (Caption)
+formatar_vars_caption <- function(string_vars) {
+  if (is.na(string_vars) || string_vars == "") return("variáveis")
+
+  vars <- stringr::str_split(string_vars, ",\\s*|\\s+e\\s+")[[1]] |>
+    stringr::str_trim() |>
+    Filter(f = function(x) x != "")
+
+  n <- length(vars)
+
+  # Mantemos "registros de" para ambos, pois concorda com o plural oculto ou explícito
+  prefixo <- ""
+
+  lista <- if (n == 1) {
+    vars
+  } else {
+    paste0(paste(vars[1:(n-1)], collapse = ", "), " e ", vars[n])
+  }
+
+  return(paste0(prefixo, lista))
+}
+
+
+# Limpa o nome do denominador para a mensagem (ex: "Total de nascidos vivos" -> "nascidos vivos")
+limpar_nome_denominador <- function(nome) {
+  if (is.na(nome) || nome == "") return("registros")
+  nome_limpo <- stringr::str_to_lower(nome)
+  nome_limpo <- stringr::str_remove(nome_limpo, "total de ")
+  return(nome_limpo)
+}

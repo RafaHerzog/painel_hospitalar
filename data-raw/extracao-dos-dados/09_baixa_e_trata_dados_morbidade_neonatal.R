@@ -6,6 +6,7 @@ library(dplyr)
 library(data.table)
 library(readr)
 library(readxl)
+library(microdatasus)
 
 # Para o indicador de condições ameaçadoras ------------------------------
 ## Lendo o arquivo com os nascimentos em hospital no período de 2018-2023
@@ -25,7 +26,7 @@ df_ameacadoras <- df_sinasc_nasc_em_hospital |>
     .keep = "unused"
   ) |>
   clean_names() |>
-  group_by(codmunnasc, codestab, ano) |>
+  group_by(codmunnasc, codestab, mes, ano) |>
   summarise_at(vars(contains("nascidos")), sum) |>
   ungroup() |>
   rename(codmunocor = codmunnasc, cnes = codestab)
@@ -65,7 +66,7 @@ for (estado in estados) {
           timeout = 500,
           stop_on_error = TRUE,
           vars = c(
-            "CNES", "CEP", "MUNIC_RES", "MUNIC_MOV", "ANO_CMPT", "COD_IDADE", "IDADE", "NASC",
+            "CNES", "CEP", "MUNIC_RES", "MUNIC_MOV", "MES_CMPT", "ANO_CMPT", "COD_IDADE", "IDADE", "NASC",
             "DT_INTER", "DT_SAIDA", "COBRANCA", "N_AIH", "DIAG_PRINC", "PROC_REA",
             "US_TOT", "UTI_MES_TO"
           )
@@ -163,7 +164,8 @@ write.csv2(
 
 ## Para os numeradores dos indicadores (número de internações/internações em UTI em menores de 28 dias) ----
 ### Lendo a base auxiliar de CNES
-df_cnes_aux <- read.csv("data-raw/extracao-dos-dados/databases/df_cnes_aux.csv")
+df_cnes_aux <- read.csv("data-raw/extracao-dos-dados/databases/df_cnes_aux.csv") |>
+  select(cnes:nome_fantasia, mes, ano)
 
 ### Lendo uma base com informações auxiliares dos municípios
 df_infos_municipios <- read.csv("data-raw/extracao-dos-dados/databases_auxiliares/df_aux_municipios.csv") |>
@@ -196,7 +198,7 @@ dbDisconnect(con)
 df_aih_internacoes <- left_join(
   df_aih_internacoes_aux,
   df_sih_rd_menores_28 |>
-    select(CNES, ANO_CMPT, DT_INTER, DT_SAIDA, N_AIH, MUNIC_MOV, idade_dias) |>
+    select(CNES, MES_CMPT, ANO_CMPT, DT_INTER, DT_SAIDA, N_AIH, MUNIC_MOV, idade_dias) |>
     mutate_at(vars(c(CNES, DT_INTER, DT_SAIDA, N_AIH, MUNIC_MOV)), as.character)
 )
 
@@ -209,6 +211,7 @@ df_aih_internacoes_wide <- df_aih_internacoes |>
   ) |>
   group_by(AIHREF) |>  # Agrupando pelo N_AIH comum para todas as linhas de um episódio de cuidado completo
   summarise(
+    MES_CMPT = last(MES_CMPT),
     ANO_CMPT = last(ANO_CMPT),  # Ano de processamento do SIH da última internação
     CNES = first(CNES),  # CNES do estabelecimento da primeira internação
     MUNIC_RES = first(MUNIC_RES),  # Município de residência da primeira internação
@@ -220,10 +223,10 @@ df_aih_internacoes_wide <- df_aih_internacoes |>
     COBRANCA = last(COBRANCA)
   ) |>
   ungroup() |>
-  select(ano = ANO_CMPT, codmunres = MUNIC_RES, causabas = PDIAG, codmunocor = MUNIC_MOV, cnes = CNES, aihref = AIHREF, idade_dias, soma_uti_mes_to = SOMA_UTI, cobranca = COBRANCA) |>
+  select(mes = MES_CMPT, ano = ANO_CMPT, codmunres = MUNIC_RES, causabas = PDIAG, codmunocor = MUNIC_MOV, cnes = CNES, aihref = AIHREF, idade_dias, soma_uti_mes_to = SOMA_UTI, cobranca = COBRANCA) |>
   # Filtrando apenas pelos casos em que os municípios de residência e ocorrência são considerados no painel
   filter(codmunres %in% df_infos_municipios$codmunres & codmunocor %in% df_infos_municipios$codmunres) |>
-  semi_join(df_cnes_aux |> mutate(cnes = as.character(cnes), codufmun = as.character(codufmun)), by = join_by(cnes, codmunocor == codufmun, ano))
+  semi_join(df_cnes_aux |> mutate(cnes = as.character(cnes), codufmun = as.character(codufmun)), by = join_by(cnes, codmunocor == codufmun, mes, ano))
 
 ### Adicionando as indicadores de internação em UTI e de internação na macrorregião de residência
 df_aih_internacoes_wide_macros <- df_aih_internacoes_wide |>
@@ -257,51 +260,73 @@ df_temp <- df_aih_internacoes_wide_macros |>
     names_from = c(idade_cat, indicadora_uti, cobranca),
     values_from = num_internacoes,
     values_fill = 0,
-    names_prefix = "internacoes_"
+    names_prefix = "internacoes_neonatais_"
   ) |>
-  right_join(df_cnes_aux, by = join_by(cnes, codmunocor == codufmun, ano)) |>
-  arrange(cnes, codmunocor, ano) |>
-  mutate(across(-c(ano, cnes, codmunocor), ~ replace_na(., 0)))
+  right_join(df_cnes_aux, by = join_by(cnes, codmunocor == codufmun, mes, ano)) |>
+  arrange(cnes, codmunocor, mes, ano) |>
+  mutate(across(-c(mes, ano, cnes, codmunocor), ~ replace_na(., 0)))
 
 df_bloco7_sih_internacoes <- df_temp %>%
   mutate(
-    # Para o indicador de internações geral, os nomes das variáveis seguem o padrão "internacoes_local-do-parto_idade-do-bebe"
-    internacoes_0_dias = rowSums(select(., contains("0_dias")), na.rm = TRUE),
-    internacoes_1_a_6_dias = rowSums(select(., contains("1_a_6_dias")), na.rm = TRUE),
-    internacoes_7_a_27_dias = rowSums(select(., contains("7_a_27_dias")), na.rm = TRUE),
+    # Para o indicador de internações geral, os nomes das variáveis seguem o padrão "internacoes_neonatais_local-do-parto_idade-do-bebe"
+    internacoes_neonatais_0_dias = rowSums(select(., contains("0_dias")), na.rm = TRUE),
+    internacoes_neonatais_1_a_6_dias = rowSums(select(., contains("1_a_6_dias")), na.rm = TRUE),
+    internacoes_neonatais_7_a_27_dias = rowSums(select(., contains("7_a_27_dias")), na.rm = TRUE),
+    total_internacoes_neonatais = internacoes_neonatais_0_dias + internacoes_neonatais_1_a_6_dias + internacoes_neonatais_7_a_27_dias,
 
-    # Para o indicador de internações em UTI, os nomes das variáveis seguem o padrão "internacoes_local-do-parto_idade-do-bebe_internado_uti"
-    internacoes_uti_0_dias = rowSums(select(., contains("0_dias_internado")), na.rm = TRUE),
-    internacoes_uti_1_a_6_dias = rowSums(select(., contains("1_a_6_dias_internado")), na.rm = TRUE),
-    internacoes_uti_7_a_27_dias = rowSums(select(., contains("7_a_27_dias_internado")), na.rm = TRUE),
+    # Para o indicador de internações em UTI, os nomes das variáveis seguem o padrão "internacoes_neonatais_local-do-parto_idade-do-bebe_internado_uti"
+    internacoes_neonatais_uti_0_dias = rowSums(select(., contains("0_dias_internado")), na.rm = TRUE),
+    internacoes_neonatais_uti_1_a_6_dias = rowSums(select(., contains("1_a_6_dias_internado")), na.rm = TRUE),
+    internacoes_neonatais_uti_7_a_27_dias = rowSums(select(., contains("7_a_27_dias_internado")), na.rm = TRUE),
+    internacoes_neonatais_uti = internacoes_neonatais_uti_0_dias + internacoes_neonatais_uti_1_a_6_dias + internacoes_neonatais_uti_7_a_27_dias,
 
     # Para o indicador de motivo de alta
-    internacoes_tipo_de_alta_alta_0_dias = rowSums(select(., contains("0_dias") & contains("cobranca_1")), na.rm = TRUE),
-    internacoes_tipo_de_alta_alta_1_a_6_dias = rowSums(select(., contains("1_a_6_dias") & contains("cobranca_1")), na.rm = TRUE),
-    internacoes_tipo_de_alta_alta_7_a_27_dias = rowSums(select(., contains("7_a_27_dias") & contains("cobranca_1")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_alta_0_dias = rowSums(select(., contains("0_dias") & contains("cobranca_1")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_alta_1_a_6_dias = rowSums(select(., contains("1_a_6_dias") & contains("cobranca_1")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_alta_7_a_27_dias = rowSums(select(., contains("7_a_27_dias") & contains("cobranca_1")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_alta =
+      internacoes_neonatais_tipo_de_saida_alta_0_dias +
+      internacoes_neonatais_tipo_de_saida_alta_1_a_6_dias +
+      internacoes_neonatais_tipo_de_saida_alta_7_a_27_dias,
 
-    internacoes_tipo_de_alta_permanencia_0_dias = rowSums(select(., contains("0_dias") & contains("cobranca_2")), na.rm = TRUE),
-    internacoes_tipo_de_alta_permanencia_1_a_6_dias = rowSums(select(., contains("1_a_6_dias") & contains("cobranca_2")), na.rm = TRUE),
-    internacoes_tipo_de_alta_permanencia_7_a_27_dias = rowSums(select(., contains("7_a_27_dias") & contains("cobranca_2")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_permanencia_0_dias = rowSums(select(., contains("0_dias") & contains("cobranca_2")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_permanencia_1_a_6_dias = rowSums(select(., contains("1_a_6_dias") & contains("cobranca_2")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_permanencia_7_a_27_dias = rowSums(select(., contains("7_a_27_dias") & contains("cobranca_2")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_permanencia =
+      internacoes_neonatais_tipo_de_saida_permanencia_0_dias +
+      internacoes_neonatais_tipo_de_saida_permanencia_1_a_6_dias +
+      internacoes_neonatais_tipo_de_saida_permanencia_7_a_27_dias,
 
-    internacoes_tipo_de_alta_transferencia_0_dias = rowSums(select(., contains("0_dias") & contains("cobranca_3")), na.rm = TRUE),
-    internacoes_tipo_de_alta_transferencia_1_a_6_dias = rowSums(select(., contains("1_a_6_dias") & contains("cobranca_3")), na.rm = TRUE),
-    internacoes_tipo_de_alta_transferencia_7_a_27_dias = rowSums(select(., contains("7_a_27_dias") & contains("cobranca_3")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_transferencia_0_dias = rowSums(select(., contains("0_dias") & contains("cobranca_3")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_transferencia_1_a_6_dias = rowSums(select(., contains("1_a_6_dias") & contains("cobranca_3")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_transferencia_7_a_27_dias = rowSums(select(., contains("7_a_27_dias") & contains("cobranca_3")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_transferencia =
+      internacoes_neonatais_tipo_de_saida_transferencia_0_dias +
+      internacoes_neonatais_tipo_de_saida_transferencia_1_a_6_dias +
+      internacoes_neonatais_tipo_de_saida_transferencia_7_a_27_dias,
 
-    internacoes_tipo_de_alta_morte_0_dias = rowSums(select(., contains("0_dias") & contains("cobranca_4")), na.rm = TRUE),
-    internacoes_tipo_de_alta_morte_1_a_6_dias = rowSums(select(., contains("1_a_6_dias") & contains("cobranca_4")), na.rm = TRUE),
-    internacoes_tipo_de_alta_morte_7_a_27_dias = rowSums(select(., contains("7_a_27_dias") & contains("cobranca_4")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_morte_0_dias = rowSums(select(., contains("0_dias") & contains("cobranca_4")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_morte_1_a_6_dias = rowSums(select(., contains("1_a_6_dias") & contains("cobranca_4")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_morte_7_a_27_dias = rowSums(select(., contains("7_a_27_dias") & contains("cobranca_4")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_morte =
+      internacoes_neonatais_tipo_de_saida_morte_0_dias +
+      internacoes_neonatais_tipo_de_saida_morte_1_a_6_dias +
+      internacoes_neonatais_tipo_de_saida_morte_7_a_27_dias,
 
-    internacoes_tipo_de_alta_administrativa_0_dias = rowSums(select(., contains("0_dias") & contains("cobranca_5")), na.rm = TRUE),
-    internacoes_tipo_de_alta_administrativa_1_a_6_dias = rowSums(select(., contains("1_a_6_dias") & contains("cobranca_5")), na.rm = TRUE),
-    internacoes_tipo_de_alta_administrativa_7_a_27_dias = rowSums(select(., contains("7_a_27_dias") & contains("cobranca_5")), na.rm = TRUE)
+    internacoes_neonatais_tipo_de_saida_alta_administrativa_0_dias = rowSums(select(., contains("0_dias") & contains("cobranca_5")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_alta_administrativa_1_a_6_dias = rowSums(select(., contains("1_a_6_dias") & contains("cobranca_5")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_alta_administrativa_7_a_27_dias = rowSums(select(., contains("7_a_27_dias") & contains("cobranca_5")), na.rm = TRUE),
+    internacoes_neonatais_tipo_de_saida_alta_administrativa =
+      internacoes_neonatais_tipo_de_saida_alta_administrativa_0_dias +
+      internacoes_neonatais_tipo_de_saida_alta_administrativa_1_a_6_dias +
+      internacoes_neonatais_tipo_de_saida_alta_administrativa_7_a_27_dias
   ) |>
-  select(ano, cnes, codmunocor, ends_with("_0_dias"), ends_with("_6_dias"), ends_with("_27_dias"), ends_with("internado_uti") & !ends_with("nao_internado_uti"))
+  select(mes, ano, cnes, codmunocor, internacoes_neonatais_0_dias:internacoes_neonatais_tipo_de_saida_alta_administrativa)
 
 ### Verificando se o total de internações equivale ao número de linhas das bases df_aih_wide/df_aih_wide_macros
-sum(df_bloco7_sih_internacoes$internacoes_0_dias, df_bloco7_sih_internacoes$internacoes_1_a_6_dias, df_bloco7_sih_internacoes$internacoes_7_a_27_dias) == nrow(df_aih_internacoes_wide_macros)
+sum(df_bloco7_sih_internacoes$internacoes_neonatais_0_dias, df_bloco7_sih_internacoes$internacoes_neonatais_1_a_6_dias, df_bloco7_sih_internacoes$internacoes_neonatais_7_a_27_dias) == nrow(df_aih_internacoes_wide_macros)
 
-sum(df_bloco7_sih_internacoes$internacoes_uti_0_dias, df_bloco7_sih_internacoes$internacoes_uti_1_a_6_dias, df_bloco7_sih_internacoes$internacoes_uti_7_a_27_dias) == nrow(df_aih_internacoes_wide[df_aih_internacoes_wide$soma_uti_mes_to > 0, ])
+sum(df_bloco7_sih_internacoes$internacoes_neonatais_uti_0_dias, df_bloco7_sih_internacoes$internacoes_neonatais_uti_1_a_6_dias, df_bloco7_sih_internacoes$internacoes_neonatais_uti_7_a_27_dias) == nrow(df_aih_internacoes_wide[df_aih_internacoes_wide$soma_uti_mes_to > 0, ])
 
 
 ## Para o denominador dos indicadores (total de partos públicos) -----------
@@ -326,7 +351,7 @@ dbDisconnect(con)
 df_aih_partos <- left_join(
   df_aih_partos_aux,
   df_sih_rd_partos |>
-    select(CNES, MUNIC_MOV, ANO_CMPT, DT_INTER, DT_SAIDA, N_AIH) |>
+    select(CNES, MUNIC_MOV, MES_CMPT, ANO_CMPT, DT_INTER, DT_SAIDA, N_AIH) |>
     mutate_at(vars(c(CNES, MUNIC_MOV, DT_INTER, DT_SAIDA, N_AIH)), as.character)
 )
 
@@ -334,21 +359,22 @@ df_aih_partos <- left_join(
 df_bloco7_sih_partos <- df_aih_partos |>
   group_by(AIHREF) |>  # Agrupando pelo N_AIH comum para todas as linhas de um episódio de cuidado completo
   summarise(
+    MES_CMPT = last(MES_CMPT),
     ANO_CMPT = last(ANO_CMPT),  # Ano de processamento do SIH da última internação
     MUNIC_MOV = first(MUNIC_MOV),  # Município de ocorrência da primeira internação
     CNES = first(CNES)  # CNES da primeira internação
   ) |>
   ungroup() |>
-  select(ano = ANO_CMPT, cnes = CNES, codmunocor = MUNIC_MOV, aihref = AIHREF) |>
+  select(mes = MES_CMPT, ano = ANO_CMPT, cnes = CNES, codmunocor = MUNIC_MOV, aihref = AIHREF) |>
   mutate(nascidos_estabelecimentos_publicos_sih = 1) |>
   clean_names() |>
-  group_by(cnes, codmunocor, ano) |>
+  group_by(cnes, codmunocor, mes, ano) |>
   # Criando a variável que contém o número nascimentos em hospitais públicos em cada município
   summarise(nascidos_estabelecimentos_publicos_sih = sum(nascidos_estabelecimentos_publicos_sih)) |>
   ungroup() |>
   # Juntando com a base auxiliar de CNES
   mutate(cnes = as.numeric(cnes), codmunocor = as.numeric(codmunocor)) |>
-  right_join(df_cnes_aux, by = join_by(cnes, codmunocor == codufmun, ano)) |>
+  right_join(df_cnes_aux, by = join_by(cnes, codmunocor == codufmun, mes, ano)) |>
   mutate(across(everything(), ~replace_na(., 0)))
 
 ### Removendo arquivos já utilizados e que são maiores que o limite de 100 mb
@@ -362,24 +388,12 @@ file.remove(c(
 ))
 
 ## Juntando todas as bases
-df_bloco7_morbidade_neonatal <- right_join(df_ameacadoras, df_cnes_aux, by = join_by(cnes, codmunocor == codufmun, ano)) |>
+df_bloco7_morbidade_neonatal <- right_join(df_ameacadoras, df_cnes_aux, by = join_by(cnes, codmunocor == codufmun, mes, ano)) |>
   left_join(df_bloco7_sih_partos) |>
-  left_join(df_bloco7_sih_internacoes)
+  left_join(df_bloco7_sih_internacoes) |>
+  mutate(across(everything(), ~replace_na(., 0)))
 
-## Preenchendo os valores NAs, gerados após o left_join, com 0 (MENOS PARA 2023 PARA AS COLUNAS QUE VEM DO SIH, QUE AINDA NÃO FORAM ATUALIZADAS)
-internacoes_cols <- grep("^internacoes|sih$", names(df_bloco7_morbidade_neonatal), value = TRUE)
-
-for (col in names(df_bloco7_morbidade_neonatal)) {
-  if (col %in% internacoes_cols) {
-    # Nas colunas que começam com "internacoes" ou que terminam com "sih", substituir os NAs por 0 apenas se o ano não for 2023
-    df_bloco7_morbidade_neonatal[[col]][is.na(df_bloco7_morbidade_neonatal[[col]])] <- 0 #& df_bloco7_morbidade_neonatal$ano != 2023
-  } else {
-    # Nas outras colunas, substituir todos os NAs por 0
-    df_bloco7_morbidade_neonatal[[col]][is.na(df_bloco7_morbidade_neonatal[[col]])] <- 0
-  }
-}
-
-write.csv(df_bloco7_morbidade_neonatal, 'data-raw/csv/df_indicadores_morbidade_neonatal_2018_2023.csv.csv', row.names = FALSE)
+write.csv(df_bloco7_morbidade_neonatal, 'data-raw/csv/df_indicadores_morbidade_neonatal_2018_2023.csv', row.names = FALSE)
 
 
 ############ Dados para a distribuição de internações neonatais
@@ -399,7 +413,7 @@ df_internacoes_neonatais_totais <- df_aih_internacoes_wide |>
     causabas2 = substr(causabas, 1 , 3)
   ) |>
   filter(!(causabas %in% excluir | causabas2 %in% excluir)) |>
-  select(codmunocor, cnes, ano) |>
+  select(codmunocor, cnes, mes, ano) |>
   mutate(internacoes_neonatais_totais = 1) |>
   group_by(across(!internacoes_neonatais_totais)) |>
   summarise(internacoes_neonatais_totais = sum(internacoes_neonatais_totais)) |>
@@ -428,19 +442,19 @@ internacoes_neonatais_grupos <- df_aih_internacoes_wide |>
       TRUE ~ "morbidade_neonatal_grupos_outros"
     )
   ) |>
-  select(codmunocor, cnes, ano, grupo_cid) |>
-  mutate(internacoes = 1) |>
-  group_by(across(!internacoes)) |>
-  summarise(internacoes = sum(internacoes)) |>
+  select(codmunocor, cnes, mes, ano, grupo_cid) |>
+  mutate(internacoes_neonatais = 1) |>
+  group_by(across(!internacoes_neonatais)) |>
+  summarise(internacoes_neonatais = sum(internacoes_neonatais)) |>
   ungroup() |>
   pivot_wider(
     names_from = grupo_cid,
-    values_from = internacoes,
+    values_from = internacoes_neonatais,
     values_fill = 0
   ) |>
-  right_join(df_cnes_aux |> mutate(cnes = as.character(cnes), codufmun = as.character(codufmun)), by = join_by(cnes, codmunocor == codufmun, ano)) |>
+  right_join(df_cnes_aux |> mutate(cnes = as.character(cnes), codufmun = as.character(codufmun)), by = join_by(cnes, codmunocor == codufmun, mes, ano)) |>
   mutate(across(everything(), ~replace_na(., 0)))  |>
-  arrange(cnes, codmunocor, ano)
+  arrange(cnes, codmunocor, mes, ano)
 
 internacoes_neonatais_grupos[is.na(internacoes_neonatais_grupos)] <- 0
 
@@ -468,19 +482,19 @@ internacoes_neonatais_grupos_0_dias <- df_aih_internacoes_wide |>
       TRUE ~ "morbidade_neonatal_grupos_0_dias_outros"
     )
   ) |>
-  select(codmunocor, cnes, ano, grupo_cid) |>
-  mutate(internacoes = 1) |>
-  group_by(across(!internacoes)) |>
-  summarise(internacoes = sum(internacoes)) |>
+  select(codmunocor, cnes, mes, ano, grupo_cid) |>
+  mutate(internacoes_neonatais = 1) |>
+  group_by(across(!internacoes_neonatais)) |>
+  summarise(internacoes_neonatais = sum(internacoes_neonatais)) |>
   ungroup() |>
   pivot_wider(
     names_from = grupo_cid,
-    values_from = internacoes,
+    values_from = internacoes_neonatais,
     values_fill = 0
   ) |>
-  right_join(df_cnes_aux |> mutate(cnes = as.character(cnes), codufmun = as.character(codufmun)), by = join_by(cnes, codmunocor == codufmun, ano)) |>
+  right_join(df_cnes_aux |> mutate(cnes = as.character(cnes), codufmun = as.character(codufmun)), by = join_by(cnes, codmunocor == codufmun, mes, ano)) |>
   mutate(across(everything(), ~replace_na(., 0)))  |>
-  arrange(cnes, codmunocor, ano)
+  arrange(cnes, codmunocor, mes, ano)
 
 internacoes_neonatais_grupos_0_dias[is.na(internacoes_neonatais_grupos_0_dias)] <- 0
 
@@ -508,19 +522,19 @@ internacoes_neonatais_grupos_7_27_dias <- df_aih_internacoes_wide |>
       TRUE ~ "morbidade_neonatal_grupos_7_27_dias_outros"
     )
   ) |>
-  select(codmunocor, cnes, ano, grupo_cid) |>
-  mutate(internacoes = 1) |>
-  group_by(across(!internacoes)) |>
-  summarise(internacoes = sum(internacoes)) |>
+  select(codmunocor, cnes, mes, ano, grupo_cid) |>
+  mutate(internacoes_neonatais = 1) |>
+  group_by(across(!internacoes_neonatais)) |>
+  summarise(internacoes_neonatais = sum(internacoes_neonatais)) |>
   ungroup() |>
   pivot_wider(
     names_from = grupo_cid,
-    values_from = internacoes,
+    values_from = internacoes_neonatais,
     values_fill = 0
   ) |>
-  right_join(df_cnes_aux |> mutate(cnes = as.character(cnes), codufmun = as.character(codufmun)), by = join_by(cnes, codmunocor == codufmun, ano)) |>
+  right_join(df_cnes_aux |> mutate(cnes = as.character(cnes), codufmun = as.character(codufmun)), by = join_by(cnes, codmunocor == codufmun, mes, ano)) |>
   mutate(across(everything(), ~replace_na(., 0)))  |>
-  arrange(cnes, codmunocor, ano)
+  arrange(cnes, codmunocor, mes, ano)
 
 internacoes_neonatais_grupos_7_27_dias[is.na(internacoes_neonatais_grupos_7_27_dias)] <- 0
 
@@ -547,19 +561,19 @@ internacoes_neonatais_grupos_1_6_dias <- df_aih_internacoes_wide |>
       TRUE ~ "morbidade_neonatal_grupos_1_6_dias_outros"
     )
   ) |>
-  select(codmunocor, cnes, ano, grupo_cid) |>
-  mutate(internacoes = 1) |>
-  group_by(across(!internacoes)) |>
-  summarise(internacoes = sum(internacoes)) |>
+  select(codmunocor, cnes, mes, ano, grupo_cid) |>
+  mutate(internacoes_neonatais = 1) |>
+  group_by(across(!internacoes_neonatais)) |>
+  summarise(internacoes_neonatais = sum(internacoes_neonatais)) |>
   ungroup() |>
   pivot_wider(
     names_from = grupo_cid,
-    values_from = internacoes,
+    values_from = internacoes_neonatais,
     values_fill = 0
   ) |>
-  right_join(df_cnes_aux |> mutate(cnes = as.character(cnes), codufmun = as.character(codufmun)), by = join_by(cnes, codmunocor == codufmun, ano)) |>
+  right_join(df_cnes_aux |> mutate(cnes = as.character(cnes), codufmun = as.character(codufmun)), by = join_by(cnes, codmunocor == codufmun, mes, ano)) |>
   mutate(across(everything(), ~replace_na(., 0)))  |>
-  arrange(cnes, codmunocor, ano)
+  arrange(cnes, codmunocor, mes, ano)
 
 internacoes_neonatais_grupos_1_6_dias[is.na(internacoes_neonatais_grupos_1_6_dias)] <- 0
 
@@ -569,11 +583,11 @@ df_distribuicao_morbidade <- left_join(internacoes_neonatais_grupos, internacoes
   left_join(internacoes_neonatais_grupos_7_27_dias) |>
   left_join(df_internacoes_neonatais_totais) |>
   dplyr::select(
-    cnes, codmunocor, ano, categoria_porte, tipo, municipio, uf, regiao, cod_r_saude, r_saude, cod_macro_r_saude, macro_r_saude,
+    cnes, codmunocor, mes, ano,
     internacoes_neonatais_totais,
     starts_with("morbidade")
   ) |>
-  arrange(cnes, codmunocor, ano)
+  arrange(cnes, codmunocor, mes, ano)
 
 write.csv(df_distribuicao_morbidade, "data-raw/csv/df_causas_principais_morbidade_neonatal_2018_2023.csv", row.names = FALSE)
 

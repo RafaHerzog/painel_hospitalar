@@ -5,8 +5,9 @@ account: observatorioobstetrico
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 15998010
-bundleId: 11145880
+bundleId: 11647796
 url: https://observatorioobstetrico.shinyapps.io/painel_hospitalar/
 version: 1
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: analise_exploratoria_estabelecimentos/databases/df_indicadores_fetais_2018_2023.csv|analise_exploratoria_estabelecimentos/databases/df_indicadores_neonatais_2018_2023.csv|analise_exploratoria_estabelecimentos/databases/df_indicadores_sinasc_2018_2023.csv|analise_exploratoria_estabelecimentos/relatorio_analise_exploratoria.html|analise_exploratoria_estabelecimentos/relatorio_analise_exploratoria.Rmd|df_procedimentos.csv

@@ -79,7 +79,7 @@ processa_uf <- function(uf_sigla, anos, out_dir) {
       # Filtrando apenas por mulheres (SEXO == 3), com idade de 10 a 49 anos e com IDENT != 5
       filter(
         SEXO == 3,
-        COD_IDADE == 4, between(IDADE, 10, 49),
+        #COD_IDADE == 4, between(IDADE, 10, 49),
         IDENT != 5,
         criterio_primario == 1L,
         !is.na(CNES) & !is.na(MUNIC_MOV)

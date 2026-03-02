@@ -78,6 +78,7 @@ processa_estado <- function(estado) {
     ) |>
     group_by(AIHREF) |>
     summarise(
+      mes = last(MES_CMPT),
       ano = last(ANO_CMPT),
       cnes = first(CNES),
       codmunocor = first(MUNIC_MOV),
@@ -97,11 +98,16 @@ processa_estado <- function(estado) {
       cid_asso = first(CID_ASSO),
       cid_notif = first(CID_NOTIF),
       proc_rea = first(PROC_REA),
-      cobranca = last(COBRANCA)
+      cobranca = last(COBRANCA),
+      cod_idade = first(COD_IDADE),
+      idade = first(IDADE),
+      raca_cor = first(RACA_COR),
+      instru = first(INSTRU)
     ) |>
     ungroup() |>
     select(
       aihref = AIHREF,
+      mes,
       ano,
       cnes,
       codmunocor,
@@ -113,7 +119,11 @@ processa_estado <- function(estado) {
       cid_asso,
       cid_notif,
       proc_rea,
-      cobranca
+      cobranca,
+      cod_idade,
+      idade,
+      raca_cor,
+      instru
     )
 
   # Salvando o arquivo no formato wide
@@ -127,7 +137,7 @@ processa_estado <- function(estado) {
   df_indicadores_sih_sp <- fread(glue("{output_dir_sih_sp}/{estado}_sih_sp_filtrado_2018_2023.csv.gz")) |>
     left_join(df_sih_long_uf, by = join_by("SP_NAIH" == "N_AIH")) |>
     mutate(
-      internacoes_motivo_parto = if_else(
+      internacoes_obstetricas_motivo_parto = if_else(
         FLAG == "<init>" &
           (
             (
@@ -140,17 +150,17 @@ processa_estado <- function(estado) {
           ),
         1, 0, missing = 0
       ),
-      internacoes_parto_acompanhante = if_else(SP_ATOPROF == 802010032, 1, 0, missing = 0)
+      internacoes_obstetricas_parto_acompanhante = if_else(SP_ATOPROF == 802010032, 1, 0, missing = 0)
     ) |>
     group_by(AIHREF) |>
     summarise(
-      internacoes_motivo_parto = first(internacoes_motivo_parto),
-      internacoes_parto_acompanhante = sum(internacoes_parto_acompanhante)
+      internacoes_obstetricas_motivo_parto = first(internacoes_obstetricas_motivo_parto),
+      internacoes_obstetricas_parto_acompanhante = sum(internacoes_obstetricas_parto_acompanhante)
     ) |>
     ungroup() |>
     mutate(
-      internacoes_parto_acompanhante = if_else(
-        internacoes_motivo_parto == 1 & internacoes_parto_acompanhante >= 1,
+      internacoes_obstetricas_parto_acompanhante = if_else(
+        internacoes_obstetricas_motivo_parto == 1 & internacoes_obstetricas_parto_acompanhante >= 1,
         1, 0, missing = 0
       ),
       .keep = "unused"
@@ -166,10 +176,11 @@ processa_estado <- function(estado) {
       cobranca = as.numeric(cobranca)
     ) |>
     mutate(
-      total_internacoes = 1,
+      total_internacoes_obstetricas = 1,
 
-      internacoes_motivo_aborto = if_else(diag_princ >= "O00" & diag_princ <= "O08", 1, 0, missing = 0),
-      internacoes_motivo_parto = if_else(
+      # Internações obstétricas por motivos específicos
+      internacoes_obstetricas_motivo_aborto = if_else(diag_princ >= "O00" & diag_princ <= "O08", 1, 0, missing = 0),
+      internacoes_obstetricas_motivo_parto = if_else(
         (
           (diag_princ >= "O32" & diag_princ <= "O36") |
             (diag_princ >= "O60" & diag_princ <= "O69") |
@@ -179,7 +190,7 @@ processa_estado <- function(estado) {
           (!(diag_princ >= "O00" & diag_princ <= "O08") & (proc_rea %in% c(310010012, 310010039, 310010047, 310010055, 411010026, 411010034, 411010042))),
         1, 0, missing = 0
       ),
-      internacoes_motivo_intercorrencia_puerperio = if_else(
+      internacoes_obstetricas_motivo_intercorrencia_puerperio = if_else(
         ((diag_princ >= "O70" & diag_princ <= "O73") |
           (diag_princ >= "O85" & diag_princ <= "O94") |
           proc_rea == 303100010) &
@@ -191,45 +202,141 @@ processa_estado <- function(estado) {
           ) | proc_rea %in% c(310010012, 310010039, 310010047, 310010055, 411010026, 411010034, 411010042)),
         1, 0, missing = 0
       ),
-      internacoes_motivo_intercorrencia_gravidez = if_else(
+      internacoes_obstetricas_motivo_intercorrencia_gravidez = if_else(
         (
           ((diag_princ >= "O10" & diag_princ <= "O28") |
              diag_princ %in% c("O30", "O31") |
              (diag_princ >= "O40" & diag_princ <= "O48")) |
             (proc_rea %in% c(303100044, 303100028, 303100036))
         ) &
-          (internacoes_motivo_aborto == 0 & internacoes_motivo_parto == 0 & internacoes_motivo_intercorrencia_puerperio == 0),
+          (internacoes_obstetricas_motivo_aborto == 0 & internacoes_obstetricas_motivo_parto == 0 & internacoes_obstetricas_motivo_intercorrencia_puerperio == 0),
         1, 0, missing = 0
       ),
-      internacoes_motivo_intercorrencia_gravidez = if_else(
-        internacoes_motivo_intercorrencia_gravidez == 0 & internacoes_motivo_aborto == 0 & internacoes_motivo_parto == 0 & internacoes_motivo_intercorrencia_puerperio == 0,
-        1, internacoes_motivo_intercorrencia_gravidez
+      internacoes_obstetricas_motivo_intercorrencia_gravidez = if_else(
+        internacoes_obstetricas_motivo_intercorrencia_gravidez == 0 & internacoes_obstetricas_motivo_aborto == 0 & internacoes_obstetricas_motivo_parto == 0 & internacoes_obstetricas_motivo_intercorrencia_puerperio == 0,
+        1, internacoes_obstetricas_motivo_intercorrencia_gravidez
       ),
-      internacoes_tipo_de_alta_alta = if_else(cobranca == 1, 1, 0, missing = 0),
-      internacoes_tipo_de_alta_permanencia = if_else(cobranca == 2, 1, 0, missing = 0),
-      internacoes_tipo_de_alta_transferencia = if_else(cobranca == 3, 1, 0, missing = 0),
-      internacoes_tipo_de_alta_morte = if_else(cobranca == 4, 1, 0, missing = 0),
-      internacoes_tipo_de_alta_administrativa = if_else(cobranca == 5, 1, 0, missing = 0),
 
-      internacoes_amiu = if_else(proc_rea == 409060070 & internacoes_motivo_aborto == 1, 1, 0, missing = 0),
-      internacoes_curetagem = if_else(proc_rea == 411020013 & internacoes_motivo_aborto == 1, 1, 0, missing = 0),
+      # Internações obstétricas por tipo de saída
+      internacoes_obstetricas_tipo_de_saida_alta = if_else(cobranca == 1, 1, 0, missing = 0),
+      internacoes_obstetricas_tipo_de_saida_permanencia = if_else(cobranca == 2, 1, 0, missing = 0),
+      internacoes_obstetricas_tipo_de_saida_transferencia = if_else(cobranca == 3, 1, 0, missing = 0),
+      internacoes_obstetricas_tipo_de_saida_morte = if_else(cobranca == 4, 1, 0, missing = 0),
+      internacoes_obstetricas_tipo_de_saida_alta_administrativa = if_else(cobranca == 5, 1, 0, missing = 0),
 
-      internacoes_aborto_legal = fifelse(
-        pmap_lgl(across(all_of(variaveis_diagnostico)), ~ any(startsWith(c(...), "O04"), na.rm = TRUE)),
+      # AMIU entre procedimentos de esvaziamento uterino
+      internacoes_obstetricas_amiu = if_else(proc_rea == 409060070 & internacoes_obstetricas_motivo_aborto == 1, 1, 0, missing = 0),
+      internacoes_obstetricas_curetagem = if_else(proc_rea == 411020013 & internacoes_obstetricas_motivo_aborto == 1, 1, 0, missing = 0),
+
+      # Internações obstétricas por aborto legal
+      internacoes_obstetricas_aborto_legal = fifelse(
+        pmap_lgl(across(all_of(variaveis_diagnostico)), ~ any(startsWith(c(...), "O04"), na.rm = TRUE)) &
+          proc_rea %in% c(310010039, 310010047, 409060046, 409060070, 411010018, 411010026, 411010034, 411010042, 411020013, 411020021),
         1L, 0L
+      ),
+
+      # Idade internações para aborto
+      internacoes_aborto_idade_10_a_14_anos = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & (idade >= 10 & idade <= 14),
+        1, 0, missing = 0
+      ),
+      internacoes_aborto_idade_15_a_19_anos = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & (idade >= 15 & idade <= 19),
+        1, 0, missing = 0
+      ),
+      internacoes_aborto_idade_20_a_34_anos = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & (idade >= 20 & idade <= 34),
+        1, 0, missing = 0
+      ),
+      internacoes_aborto_idade_35_a_39_anos = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & (idade >= 35 & idade <= 39),
+        1, 0, missing = 0
+      ),
+      internacoes_aborto_idade_40_mais_anos = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & (idade >= 40 & idade < 99),
+        1, 0, missing = 0
+      ),
+      idade_sih_incompletos = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 &
+          internacoes_aborto_idade_10_a_14_anos == 0 &
+          internacoes_aborto_idade_15_a_19_anos == 0 &
+          internacoes_aborto_idade_20_a_34_anos == 0 &
+          internacoes_aborto_idade_35_a_39_anos == 0 &
+          internacoes_aborto_idade_40_mais_anos == 0,
+        1, 0
+      ),
+
+      # Raça/cor entre internações para aborto
+      internacoes_aborto_racacor_branca = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & raca_cor == 1,
+        1, 0, missing = 0
+      ),
+      internacoes_aborto_racacor_preta = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & raca_cor == 2,
+        1, 0, missing = 0
+      ),
+      internacoes_aborto_racacor_parda = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & raca_cor == 3,
+        1, 0, missing = 0
+      ),
+      internacoes_aborto_racacor_amarela = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & raca_cor == 4,
+        1, 0, missing = 0
+      ),
+      internacoes_aborto_racacor_indigena = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & raca_cor == 5,
+        1, 0, missing = 0
+      ),
+      raca_cor_sih_incompletos = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 &
+          internacoes_aborto_racacor_branca == 0 &
+          internacoes_aborto_racacor_preta == 0 &
+          internacoes_aborto_racacor_parda == 0 &
+          internacoes_aborto_racacor_amarela == 0 &
+          internacoes_aborto_racacor_indigena == 0,
+        1, 0
+      ),
+
+      # Grau de instrução entre internações para aborto
+      internacoes_aborto_instrucao_analfabeta = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & instru == 1,
+        1, 0, missing = 0
+      ),
+      internacoes_aborto_instrucao_primeiro_grau = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & instru == 2,
+        1, 0, missing = 0
+      ),
+      internacoes_aborto_instrucao_segundo_grau = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & instru == 3,
+        1, 0, missing = 0
+      ),
+      internacoes_aborto_instrucao_terceiro_grau = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 & instru == 4,
+        1, 0, missing = 0
+      ),
+      instru_sih_incompletos = if_else(
+        internacoes_obstetricas_motivo_aborto == 1 &
+          internacoes_aborto_instrucao_analfabeta == 0 &
+          internacoes_aborto_instrucao_primeiro_grau == 0 &
+          internacoes_aborto_instrucao_segundo_grau == 0 &
+          internacoes_aborto_instrucao_terceiro_grau == 0,
+        1, 0
       )
+
     ) |>
     left_join(df_indicadores_sih_sp, by = join_by("aihref" == "AIHREF")) |>
-    group_by(cnes, codmunocor, ano) |>
-    summarise(across(starts_with("total") | starts_with("internacoes"), sum), .groups = "drop") |>
-    right_join(df_cnes_aux |> filter(uf == uf_nome), by = c("cnes", "codmunocor" = "codufmun", "ano")) |>
+    group_by(cnes, codmunocor, mes, ano) |>
+    summarise(across(starts_with("total") | starts_with("internacoes_obstetricas") | starts_with("internacoes_aborto") | ends_with("incompletos"), sum), .groups = "drop") |>
+    right_join(df_cnes_aux |> filter(uf == uf_nome), by = c("cnes", "codmunocor" = "codufmun", "mes", "ano")) |>
     mutate(across(everything(), ~replace_na(., 0))) |>
     dplyr::select(
-      cnes, codmunocor, ano, categoria_porte, tipo, municipio, uf, regiao, cod_r_saude, r_saude, cod_macro_r_saude, macro_r_saude,
-      total_internacoes,
-      starts_with("internacoes")
+      cnes, codmunocor, mes, ano, municipio, uf, regiao, cod_r_saude, r_saude, cod_macro_r_saude, macro_r_saude,
+      total_internacoes_obstetricas,
+      starts_with("internacoes_obstetricas"),
+      starts_with("internacoes_aborto"),
+      ends_with("incompletos")
     ) |>
-    arrange(cnes, codmunocor, ano)
+    arrange(cnes, codmunocor, mes, ano)
 
   write.csv(df_indicadores_sih_uf, glue("{output_dir_wide}/{estado}_df_indicadores_sih_2018_2023.csv"), row.names = FALSE)
 

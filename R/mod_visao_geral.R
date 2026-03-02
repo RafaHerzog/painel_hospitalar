@@ -19,7 +19,6 @@ mod_visao_geral_ui <- function(id) {
     # Linha contendo os três cards de apresentação do hospital
     fluidRow(
       div(
-        style = "padding-top: 10px",
         class = "col-12",
         bs4Dash::bs4Card(
           width = 12,
@@ -68,19 +67,19 @@ mod_visao_geral_ui <- function(id) {
           fluidRow(
             div(
               class = "col-12 col-lg-6 col-xl-3",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_leitos_obstetricos"), width = "100%"), proxy.height = 254)
+              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_leitos_obstetricos"), width = "100%"), proxy.height = 233)
             ),
             div(
               class = "col-12 col-lg-6 col-xl-3",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_leitos_obstetricos_sus"), width = "100%"), proxy.height = 254)
+              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_leitos_obstetricos_sus"), width = "100%"), proxy.height = 233)
             ),
             div(
               class = "col-12 col-lg-6 col-xl-3",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_leitos_uti_adulto"), width = "100%"), proxy.height = 254)
+              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_leitos_uti_adulto"), width = "100%"), proxy.height = 233)
             ),
             div(
               class = "col-12 col-lg-6 col-xl-3",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_leitos_uti_neonatal"), width = "100%"), proxy.height = 254)
+              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_leitos_uti_neonatal"), width = "100%"), proxy.height = 233)
             )
           )
         )
@@ -107,15 +106,15 @@ mod_visao_geral_ui <- function(id) {
           fluidRow(
             div(
               class = "col-12 col-xl-4",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_total_nascidos"), width = "100%"), proxy.height = 255)
+              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_total_nascidos"), width = "100%"), proxy.height = 233)
             ),
             div(
               class = "col-12 col-xl-4",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_prop_cesarianas"), width = "100%"), proxy.height = 255)
+              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_prop_cesarianas"), width = "100%"), proxy.height = 233)
             ),
             div(
               class = "col-12 col-xl-4",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_prematuros"), width = "100%"), proxy.height = 255)
+              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_prematuros"), width = "100%"), proxy.height = 233)
             )
           ),
           div(
@@ -131,11 +130,11 @@ mod_visao_geral_ui <- function(id) {
           fluidRow(
             div(
               class = "col-12 col-xl-4 offset-xl-2",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_obitos_maternos"), width = "100%"), proxy.height = 254)
+              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_obitos_maternos"), width = "100%"), proxy.height = 233)
             ),
             div(
               class = "col-12 col-xl-4",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_casos_mmg"), width = "100%"), proxy.height = 254)
+              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_casos_mmg"), width = "100%"), proxy.height = 233)
             )
           ),
           div(
@@ -151,11 +150,11 @@ mod_visao_geral_ui <- function(id) {
           fluidRow(
             div(
               class = "col-12 col-xl-4 offset-xl-2",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_obitos_fetais"), width = "100%"), proxy.height = 254)
+              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_obitos_fetais"), width = "100%"), proxy.height = 233)
             ),
             div(
               class = "col-12 col-xl-4",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_obitos_neonatais"), width = "100%"), proxy.height = 254)
+              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_obitos_neonatais"), width = "100%"), proxy.height = 233)
             )
           )
         )
@@ -239,7 +238,8 @@ mod_visao_geral_server <- function(id, filtros){
       }
 
       if (length(filtros()$input_hospital) == 1) {
-        base_filtrada
+        base_filtrada |>
+          dplyr::arrange(ano_mes)
       } else {
         # sumariza por mês
         base_filtrada |>
@@ -387,8 +387,10 @@ mod_visao_geral_server <- function(id, filtros){
         x == "nv_menos_500_leitos_utin_4_mais"  ~ "Menos de 500 nascidos vivos por ano e 4 ou mais leitos de UTI neonatal",
         x == "nv_500_a_999_leitos_utin_menos_4" ~ "De 500 a 999 nascidos vivos por ano e menos de 4 leitos de UTI neonatal",
         x == "nv_500_a_999_leitos_utin_4_mais"  ~ "De 500 a 999 nascidos vivos por ano e 4 ou mais leitos de UTI neonatal",
-        x == "nv_1000_mais_leitos_utin_menos_4" ~ "1.000 ou mais nascidos vivos por ano e menos de 4 leitos de UTI neonatal",
-        x == "nv_1000_mais_leitos_utin_4_mais"  ~ "1.000 ou mais nascidos vivos por ano e 4 ou mais leitos de UTI neonatal",
+        x == "nv_1000_a_1999_leitos_utin_menos_4" ~ "De 1000 a 1999 nascidos vivos por ano e menos de 4 leitos de UTI neonatal",
+        x == "nv_1000_a_1999_leitos_utin_4_mais"  ~ "De 1000 a 1999 nascidos vivos por ano e 4 ou mais leitos de UTI neonatal",
+        x == "nv_2000_mais_leitos_utin_menos_4" ~ "2.000 ou mais nascidos vivos por ano e menos de 4 leitos de UTI neonatal",
+        x == "nv_2000_mais_leitos_utin_4_mais"  ~ "2.000 ou mais nascidos vivos por ano e 4 ou mais leitos de UTI neonatal",
         TRUE ~ NA_character_
       )
 
@@ -398,8 +400,10 @@ mod_visao_geral_server <- function(id, filtros){
         x == "nv_menos_500_leitos_utin_4_mais"  ~ "< 500 n.v. e ≥ 4 leitos de UTIN",
         x == "nv_500_a_999_leitos_utin_menos_4" ~ "500–999 n.v. e < 4 leitos de UTIN",
         x == "nv_500_a_999_leitos_utin_4_mais"  ~ "500–999 n.v. e ≥ 4 leitos de UTIN",
-        x == "nv_1000_mais_leitos_utin_menos_4" ~ "≥ 1000 n.v. e < 4 leitos de UTIN",
-        x == "nv_1000_mais_leitos_utin_4_mais"  ~ "≥ 1000 n.v. e ≥ 4 leitos de UTIN",
+        x == "nv_1000_a_1999_leitos_utin_menos_4" ~ "1000–1999 n.v. e < 4 leitos de UTIN",
+        x == "nv_1000_a_1999_leitos_utin_4_mais"  ~ "1000–1999 n.v. e ≥ 4 leitos de UTIN",
+        x == "nv_2000_mais_leitos_utin_menos_4" ~ "≥ 2000 n.v. e < 4 leitos de UTIN",
+        x == "nv_2000_mais_leitos_utin_4_mais"  ~ "≥ 2000 n.v. e ≥ 4 leitos de UTIN",
         TRUE ~ NA_character_
       )
 
@@ -640,7 +644,8 @@ mod_visao_geral_server <- function(id, filtros){
         highcharter::hc_add_theme(hc_theme_sparkline_vb()) |>
         highcharter::hc_xAxis(
           title = list(text = NULL, enabled = FALSE)
-        )
+        ) |>
+        highcharter::hc_tooltip(valueSuffix = "%")
 
       valueBoxSpark(
         value = paste0(format(valor, big.mark = ".", decimal.mark = ","), "%"),
@@ -672,7 +677,8 @@ mod_visao_geral_server <- function(id, filtros){
         highcharter::hc_add_theme(hc_theme_sparkline_vb()) |>
         highcharter::hc_xAxis(
           title = list(text = NULL, enabled = FALSE)
-        )
+        ) |>
+        highcharter::hc_tooltip(valueSuffix = "%")
 
       valueBoxSpark(
         value = paste0(format(valor, big.mark = ".", decimal.mark = ","), "%"),
@@ -720,18 +726,34 @@ mod_visao_geral_server <- function(id, filtros){
 
       valor <- tail(df$casos_mmg, 1)
 
-      hc <- highcharter::hchart(
-        df,
-        "line",
-        highcharter::hcaes(x = ano_mes, y = casos_mmg),
-        name = "Casos de MMG"
-      ) |>
-        highcharter::hc_size(height = 80) |>
-        highcharter::hc_credits(enabled = FALSE) |>
-        highcharter::hc_add_theme(hc_theme_sparkline_vb()) |>
-        highcharter::hc_xAxis(
-          title = list(text = NULL, enabled = FALSE)
-        )
+      if (filtros()$input_natureza == "privado") {
+        hc <- highcharter::highchart() |>
+          highcharter::hc_title(
+            text = "<span class='fonte-grande' style='color:#0A1E3C; font-weight: 400;'>Não disponível para hospitais privados</span>",
+            useHTML = TRUE,
+            align = "left",
+            verticalAlign = "middle"
+          ) |>
+          highcharter::hc_size(height = 80) |>
+          highcharter::hc_credits(enabled = FALSE) |>
+          highcharter::hc_add_theme(hc_theme_sparkline_vb()) |>
+          highcharter::hc_xAxis(
+            title = list(text = NULL, enabled = FALSE)
+          )
+      } else {
+        hc <- highcharter::hchart(
+          df,
+          "line",
+          highcharter::hcaes(x = ano_mes, y = casos_mmg),
+          name = "Casos de MMG"
+        ) |>
+          highcharter::hc_size(height = 80) |>
+          highcharter::hc_credits(enabled = FALSE) |>
+          highcharter::hc_add_theme(hc_theme_sparkline_vb()) |>
+          highcharter::hc_xAxis(
+            title = list(text = NULL, enabled = FALSE)
+          )
+      }
 
       valueBoxSpark(
         value = format(valor, big.mark = ".", decimal.mark = ","),
@@ -739,7 +761,8 @@ mod_visao_geral_server <- function(id, filtros){
         sparkobj = hc,
         subtitle = get_subtitle_variacao(df, "casos_mmg"),
         icon = icon("heartbeat"),
-        href = NULL
+        href = NULL,
+        natureza = filtros()$input_natureza
       )
     })
 

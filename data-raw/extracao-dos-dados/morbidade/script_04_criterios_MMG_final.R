@@ -608,7 +608,8 @@ output_dir <- "data-raw/extracao-dos-dados/morbidade/databases/03_bases_finais"
 if (!dir.exists(output_dir)) {dir.create(output_dir)}
 
 # Juntando com a base auxiliar de CNES
-df_cnes_aux <- read.csv("data-raw/extracao-dos-dados/databases/df_cnes_aux.csv")
+df_cnes_aux <- read.csv("data-raw/extracao-dos-dados/databases/df_cnes_aux.csv") |>
+  select(cnes:nome_fantasia, mes, ano)
 
 df_bloco6_morbidade <- left_join(df_cnes_aux |> rename(codmunocor = codufmun), obs_cluster_total_mun_ano |> janitor::clean_names())
 

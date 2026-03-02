@@ -54,7 +54,7 @@ df_indicadores_perinatais <- df_indicadores_fetais_neonatais |>
     obitos_perinatais_2500_mais_1_a_6_dias = obitos_neonatais_2500_mais_1_a_6_dias
   ) |>
   dplyr::select(
-    cnes, codmunocor, mes, ano, categoria_porte, tipo, municipio, uf, regiao, cod_r_saude, r_saude, cod_macro_r_saude, macro_r_saude,
+    cnes, codmunocor, mes, ano,
     total_de_nascidos_vivos,
     starts_with("nv"),
     starts_with("obitos_perinatais")
@@ -75,7 +75,8 @@ df_obitos_neonatais_em_hospital <- fread("data-raw/extracao-dos-dados/databases/
   select(CODESTAB, CODMUNOCOR, mes, ano, PESO, CAUSABAS, OBITOPARTO, IDADE)
 
 ## Lendo o arquivo com a base auxiliar de CNES
-df_cnes_aux <- read.csv("data-raw/extracao-dos-dados/databases/df_cnes_aux.csv")
+df_cnes_aux <- read.csv("data-raw/extracao-dos-dados/databases/df_cnes_aux.csv") |>
+  select(cnes:nome_fantasia, mes, ano)
 
 ## Definindo os vetores de CIDs
 ### Criando vetores com as cids de cada grupo de causas evitáveis
@@ -103,7 +104,7 @@ recem_nascido <- c(
   sprintf("P9%d", 60:68)
 )
 
-tratamento <- c(
+acoes_diagnostico <- c(
   "A15", "A16", "A18", sprintf("G0%d", 0:4), sprintf("J0%d", 0:6),
   sprintf("J1%d", 2:8), sprintf("J1%d", 2:8), sprintf("J2%d", 0:2),
   "J384", sprintf("J4%d", 0:2), sprintf("J4%d", 5:7), sprintf("J6%d", 8:9),
@@ -112,7 +113,7 @@ tratamento <- c(
   "G40", "G41", "Q90", "N390", sprintf("I0%d", 0:9)
 )
 
-saude <- c(
+acoes_saude <- c(
   sprintf("A0%d", 0:9), sprintf("A2%d", 0:8), sprintf("A9%d", 0:9),
   sprintf("A7%d", 5:9), "A82", sprintf("B5%d", 0:9), sprintf("B6%d", 0:4),
   sprintf("B6%d", 5:9), sprintf("B7%d", 0:9), sprintf("B8%d", 0:3),
@@ -136,12 +137,12 @@ lista_cids_evitaveis <- list(
   mulher_gestacao = mulher_gestacao,
   evitaveis_parto = evitaveis_parto,
   recem_nascido = recem_nascido,
-  tratamento = tratamento,
-  saude = saude,
+  acoes_diagnostico = acoes_diagnostico,
+  acoes_saude = acoes_saude,
   mal_definidas = mal_definidas
 )
 
-rm(imunoprevencao, mulher_gestacao, evitaveis_parto, recem_nascido, tratamento, saude, mal_definidas)
+rm(imunoprevencao, mulher_gestacao, evitaveis_parto, recem_nascido, acoes_diagnostico, acoes_saude, mal_definidas)
 
 ## Criando uma função para categorizar CIDs de acordo com os grupos de causas evitáveis
 cria_grupo_evitavel <- function(data, cids, prefixo, filtro_obitoparto = NULL, idade_start = NULL, idade_end = NULL) {
@@ -176,12 +177,12 @@ cria_grupo_evitavel <- function(data, cids, prefixo, filtro_obitoparto = NULL, i
       grupo_cid = dplyr::case_when(
         causabas %in% cids$imunoprevencao | causabas2 %in% cids$imunoprevencao ~ paste0(prefixo, "_imunoprevencao"),
         causabas %in% cids$mulher_gestacao | causabas2 %in% cids$mulher_gestacao ~ paste0(prefixo, "_mulher_gestacao"),
-        causabas %in% cids$evitaveis_parto | causabas2 %in% cids$evitaveis_parto ~ paste0(prefixo, "_parto"),
+        causabas %in% cids$evitaveis_parto | causabas2 %in% cids$evitaveis_parto ~ paste0(prefixo, "_mulher_parto"),
         causabas %in% cids$recem_nascido | causabas2 %in% cids$recem_nascido ~ paste0(prefixo, "_recem_nascido"),
-        causabas %in% cids$tratamento | causabas2 %in% cids$tratamento ~ paste0(prefixo, "_tratamento"),
-        causabas %in% cids$saude | causabas2 %in% cids$saude ~ paste0(prefixo, "_saude"),
+        causabas %in% cids$acoes_diagnostico | causabas2 %in% cids$acoes_diagnostico ~ paste0(prefixo, "_acoes_diagnostico"),
+        causabas %in% cids$acoes_saude | causabas2 %in% cids$acoes_saude ~ paste0(prefixo, "_acoes_saude"),
         causabas %in% cids$mal_definidas | causabas2 %in% cids$mal_definidas ~ paste0(prefixo, "_mal_definidas"),
-        TRUE ~ paste0(prefixo, "_outros")
+        TRUE ~ paste0(prefixo, "_demais_causas")
       )
     ) |>
     dplyr::select(codmunocor, codestab, mes, ano, grupo_cid, faixa_de_peso) |>
@@ -201,28 +202,26 @@ cria_grupo_evitavel <- function(data, cids, prefixo, filtro_obitoparto = NULL, i
 
 ## Criando uma função para adicionar colunas de totais
 adiciona_totais_evitaveis <- function(df, prefixo) {
-  grupos <- c("imunoprevencao", "mulher_gestacao", "parto", "recem_nascido", "tratamento", "saude", "mal_definidas", "outros")
+  grupos <- c("imunoprevencao", "mulher_gestacao", "mulher_parto", "recem_nascido", "acoes_diagnostico", "acoes_saude", "mal_definidas", "demais_causas")
 
   for (grupo in grupos) {
     df <- df |>
       dplyr::mutate(
-        !!paste0(prefixo, "_", grupo, "_total") := rowSums(dplyr::across(dplyr::starts_with(paste0(prefixo, "_", grupo))), na.rm = TRUE),
-        .before = "tipo"
+        !!paste0(prefixo, "_", grupo, "_total") := rowSums(dplyr::across(dplyr::starts_with(paste0(prefixo, "_", grupo))), na.rm = TRUE)
       )
   }
 
   df <- df |>
     dplyr::mutate(
-      !!paste0("obitos_perinatais_totais") := rowSums(dplyr::across(dplyr::starts_with(prefixo) & dplyr::ends_with("_total")), na.rm = TRUE),
-      .before = "tipo"
+      !!paste0("obitos_perinatais_totais") := rowSums(dplyr::across(dplyr::starts_with(prefixo) & dplyr::ends_with("_total")), na.rm = TRUE)
     )
 
   return(df)
 }
 
 ## Criando os dataframes consolidados
-#df_evitaveis_perinatal_todos <- cria_grupo_evitavel(rbind(df_obitos_fetais_em_hospital, df_obitos_neonatais_em_hospital), lista_cids_evitaveis, "evitaveis_perinatal") |>
-  #adiciona_totais_evitaveis("evitaveis_perinatal")
+df_evitaveis_perinatal_todos <- cria_grupo_evitavel(rbind(df_obitos_fetais_em_hospital, df_obitos_neonatais_em_hospital), lista_cids_evitaveis, "evitaveis_perinatal") |>
+  adiciona_totais_evitaveis("evitaveis_perinatal")
 df_evitaveis_perinatal_antes <- cria_grupo_evitavel(df_obitos_fetais_em_hospital, lista_cids_evitaveis, "evitaveis_perinatal_antes", filtro_obitoparto = 1)
 df_evitaveis_perinatal_durante <- cria_grupo_evitavel(df_obitos_fetais_em_hospital, lista_cids_evitaveis, "evitaveis_perinatal_durante", filtro_obitoparto = 2)
 df_evitaveis_perinatal_sem_info_parto <- cria_grupo_evitavel(df_obitos_fetais_em_hospital, lista_cids_evitaveis, "evitaveis_perinatal_sem_info_parto", filtro_obitoparto = NA)
@@ -231,7 +230,7 @@ df_evitaveis_perinatal_1_a_6_dias <- cria_grupo_evitavel(df_obitos_neonatais_em_
 
 ## Unindo todos os dataframes em um só
 df_bloco7_perinatal_evitaveis <- list(
-  #df_evitaveis_perinatal_todos,
+  df_evitaveis_perinatal_todos,
   df_evitaveis_perinatal_antes,
   df_evitaveis_perinatal_durante,
   df_evitaveis_perinatal_sem_info_parto,
@@ -240,8 +239,9 @@ df_bloco7_perinatal_evitaveis <- list(
 ) |>
   purrr::reduce(dplyr::full_join) |>
   select(
-    codmunocor, codestab, mes, ano, categoria_porte, tipo, municipio, uf, regiao, cod_r_saude, r_saude, cod_macro_r_saude, macro_r_saude,
-    starts_with("evitaveis")
+    codmunocor, codestab, mes, ano,
+    starts_with("evitaveis"),
+    "obitos_perinatais_totais"
   )
 
 ## Salvando a base final
@@ -259,7 +259,8 @@ df_obitos_neonatais_em_hospital <- fread("data-raw/extracao-dos-dados/databases/
   select(CODESTAB, CODMUNOCOR, mes, ano, PESO, CAUSABAS, OBITOPARTO, IDADE)
 
 ## Lendo o arquivo com a base auxiliar de CNES
-df_cnes_aux <- read.csv("data-raw/extracao-dos-dados/databases/df_cnes_aux.csv")
+df_cnes_aux <- read.csv("data-raw/extracao-dos-dados/databases/df_cnes_aux.csv") |>
+  select(cnes:nome_fantasia, mes, ano)
 
 ## Definindo os vetores de CIDs
 ### Criando vetores com as cids de cada grupo
@@ -281,9 +282,9 @@ grupos_gravidez <- c("P00", "P010", "P011", "P012", "P013", "P014", "P015", "P01
 
 grupos_afeccoes_perinatal <- c("P969")
 
-grupos_ma_formacao <- c(paste0("Q", sprintf("%02d", 0:99)))
+grupos_anomalias <- c(paste0("Q", sprintf("%02d", 0:99)))
 
-grupos_mal_definida <- c(paste0("R", sprintf("%02d", 0:99)))
+grupos_mal_definidas <- c(paste0("R", sprintf("%02d", 0:99)))
 
 ### Definindo os grupos como lista nomeada
 lista_cids_causas_principais <- list(
@@ -293,13 +294,13 @@ lista_cids_causas_principais <- list(
   respiratorias = grupos_respiratorias,
   gravidez = grupos_gravidez,
   afeccoes_perinatal = grupos_afeccoes_perinatal,
-  ma_formacao = grupos_ma_formacao,
-  mal_definida = grupos_mal_definida
+  anomalias = grupos_anomalias,
+  mal_definidas = grupos_mal_definidas
 )
 
 rm(
   grupos_prematuridade, grupos_infeccoes, grupos_asfixia, grupos_respiratorias,
-  grupos_gravidez, grupos_afeccoes_perinatal, grupos_ma_formacao, grupos_mal_definida
+  grupos_gravidez, grupos_afeccoes_perinatal, grupos_anomalias, grupos_mal_definidas
 )
 
 ## Criando uma função para categorizar CIDs de acordo com os grupos de causas principais
@@ -339,9 +340,9 @@ cria_grupo_causa <- function(data, lista_cids, prefixo, filtro_obitoparto = NULL
         causabas %in% lista_cids$respiratorias | causabas2 %in% lista_cids$respiratorias ~ paste0(prefixo, "_respiratorias"),
         causabas %in% lista_cids$gravidez | causabas2 %in% lista_cids$gravidez ~ paste0(prefixo, "_gravidez"),
         causabas %in% lista_cids$afeccoes_perinatal | causabas2 %in% lista_cids$afeccoes_perinatal ~ paste0(prefixo, "_afeccoes_perinatal"),
-        causabas %in% lista_cids$ma_formacao | causabas2 %in% lista_cids$ma_formacao ~ paste0(prefixo, "_ma_formacao"),
-        causabas %in% lista_cids$mal_definida | causabas2 %in% lista_cids$mal_definida ~ paste0(prefixo, "_mal_definida"),
-        TRUE ~ paste0(prefixo, "_outros")
+        causabas %in% lista_cids$anomalias | causabas2 %in% lista_cids$anomalias ~ paste0(prefixo, "_anomalias"),
+        causabas %in% lista_cids$mal_definidas | causabas2 %in% lista_cids$mal_definidas ~ paste0(prefixo, "_mal_definidas"),
+        TRUE ~ paste0(prefixo, "_demais_causas")
       )
     ) |>
     dplyr::select(codmunocor, codestab, mes, ano, grupo_cid, faixa_de_peso) |>
@@ -362,22 +363,26 @@ cria_grupo_causa <- function(data, lista_cids, prefixo, filtro_obitoparto = NULL
 ## Criando uma função para adicionar colunas de totais
 adiciona_totais_causa <- function(df, prefixo) {
   grupos <- c("prematuridade", "infeccoes", "asfixia", "respiratorias", "gravidez",
-              "afeccoes_perinatal", "ma_formacao", "mal_definida")
+              "afeccoes_perinatal", "anomalias", "mal_definidas", "demais_causas")
 
   for (grupo in grupos) {
     df <- df |>
       dplyr::mutate(
-        !!paste0(prefixo, "_", grupo, "_total") := rowSums(dplyr::across(dplyr::starts_with(paste0(prefixo, "_", grupo))), na.rm = TRUE),
-        .before = "tipo"
+        !!paste0(prefixo, "_", grupo, "_total") := rowSums(dplyr::across(dplyr::starts_with(paste0(prefixo, "_", grupo))), na.rm = TRUE)
       )
   }
+
+  df <- df |>
+    dplyr::mutate(
+      !!paste0("obitos_perinatais_totais") := rowSums(dplyr::across(dplyr::starts_with(prefixo) & dplyr::ends_with("_total")), na.rm = TRUE)
+    )
 
   return(df)
 }
 
 # Gerando os dataframes
-#df_principais_perinatal_todos <- cria_grupo_causa(rbind(df_obitos_fetais_em_hospital, df_obitos_neonatais_em_hospital), lista_cids_causas_principais, "principais_perinatal") |>
-  #adiciona_totais_causa("principais_perinatal")
+df_principais_perinatal_todos <- cria_grupo_causa(rbind(df_obitos_fetais_em_hospital, df_obitos_neonatais_em_hospital), lista_cids_causas_principais, "principais_perinatal") |>
+  adiciona_totais_causa("principais_perinatal")
 df_principais_perinatal_antes <- cria_grupo_causa(df_obitos_fetais_em_hospital, lista_cids_causas_principais, "principais_perinatal_antes", filtro_obitoparto = 1)
 df_principais_perinatal_durante <- cria_grupo_causa(df_obitos_fetais_em_hospital, lista_cids_causas_principais, "principais_perinatal_durante", filtro_obitoparto = 2)
 df_principais_perinatal_sem_info_parto <- cria_grupo_causa(df_obitos_fetais_em_hospital, lista_cids_causas_principais, "principais_perinatal_sem_info_parto", filtro_obitoparto = NA)
@@ -386,7 +391,7 @@ df_principais_perinatal_1_a_6_dias <- cria_grupo_causa(df_obitos_neonatais_em_ho
 
 # Unindo os dataframes
 df_bloco7_principais_perinatal <- list(
-  #df_principais_perinatal_todos,
+  df_principais_perinatal_todos,
   df_principais_perinatal_antes,
   df_principais_perinatal_durante,
   df_principais_perinatal_sem_info_parto,
@@ -395,8 +400,9 @@ df_bloco7_principais_perinatal <- list(
 ) |>
   purrr::reduce(dplyr::full_join) |>
   select(
-    codmunocor, codestab, mes, ano, categoria_porte, tipo, municipio, uf, regiao, cod_r_saude, r_saude, cod_macro_r_saude, macro_r_saude,
-    starts_with("principais_")
+    codmunocor, codestab, mes, ano,
+    starts_with("principais_"),
+    "obitos_perinatais_totais"
   )
 
 ## Salvando a base final

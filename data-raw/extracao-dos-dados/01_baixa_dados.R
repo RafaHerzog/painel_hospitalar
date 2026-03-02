@@ -192,8 +192,8 @@ processa_ano <- function(ano) {
 
     df_sih_rd = df_sih_rd,
 
-    sinasc = baixa_dados(ano, "SINASC", "LOCNASC", "DTNASC") |>
-      filter(as.numeric(IDADEMAE) >= 10 & as.numeric(IDADEMAE) <= 49),
+    sinasc = baixa_dados(ano, "SINASC", "LOCNASC", "DTNASC"), #|>
+      #filter(as.numeric(IDADEMAE) >= 10 & as.numeric(IDADEMAE) <= 49),
 
     domat = baixa_dados(ano, "SIM-DOMAT", "LOCOCOR", "DTOBITO") |>
       mutate(
@@ -229,7 +229,7 @@ processa_ano <- function(ano) {
 }
 
 ## Criando um vetor com os anos a serem baixados
-anos <- 2018:2023
+anos <- 2018:2024
 
 ## Baixando todos os dados
 resultados <- future_lapply(anos, processa_ano)
@@ -244,7 +244,7 @@ df_doinf <- rbindlist(lapply(resultados, `[[`, "doinf"), fill = TRUE)
 
 ## Criando uma função para salvar os arquivos
 salva_csv_gz <- function(df, nome) {
-  path <- paste0("data-raw/extracao-dos-dados/databases/", nome, "_2018_2023.csv.gz")
+  path <- paste0("data-raw/extracao-dos-dados/databases/", nome, "_2018_2024.csv.gz")
   write.csv(df, gzfile(path), row.names = FALSE)
 }
 

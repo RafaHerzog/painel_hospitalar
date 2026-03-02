@@ -97,8 +97,8 @@ df_indicadores_sinasc <- df_sinasc_nasc_em_hospital |>
     nvm_idade_10_a_14_anos = if_else(idademae >= 10 & idademae <= 14, 1, 0, missing = 0),
     nvm_idade_15_a_19_anos = if_else(idademae >= 15 & idademae <= 19, 1, 0, missing = 0),
     nvm_idade_20_a_34_anos = if_else(idademae >= 20 & idademae <= 34, 1, 0, missing = 0),
-    nvm_idade_35_a_40_anos = if_else(idademae >= 35 & idademae <= 40, 1, 0, missing = 0),
-    nvm_idade_mais_40_anos = if_else(idademae > 40 & idademae <= 55, 1, 0, missing = 0),
+    nvm_idade_35_a_39_anos = if_else(idademae >= 35 & idademae <= 39, 1, 0, missing = 0),
+    nvm_idade_40_mais_anos = if_else(idademae >= 40 & idademae < 99, 1, 0, missing = 0),
 
     # Raça/cor da mãe
     nvm_racacor_branca = if_else(racacormae == 1, 1, 0, missing = 0),
@@ -143,6 +143,9 @@ df_indicadores_sinasc <- df_sinasc_nasc_em_hospital |>
     nvm_gestacao_unica = if_else(gravidez == 1, 1, 0, missing = 0),
     nvm_gestacao_multipla = if_else(gravidez %in% c(2, 3), 1, 0, missing = 0),
 
+    # Parto vaginal pós cesariana
+    nvm_parto_vaginal_pos_cesarea = if_else(parto == 1 & qtdpartces > 0, 1, 0, missing = 0),
+
     # Trabalho de parto induzido
     nvm_trab_parto_induzido = if_else(sttrabpart == 1, 1, 0, missing = 0),
 
@@ -168,7 +171,8 @@ df_indicadores_sinasc <- df_sinasc_nasc_em_hospital |>
     nv_ig_menos_37_semanas = if_else(semagestac < 37, 1, 0, missing = 0),
     nv_ig_37_a_38_semanas = if_else(semagestac >= 37 & semagestac <= 38, 1, 0, missing = 0),
     nv_ig_39_a_40_semanas = if_else(semagestac >= 39 & semagestac <= 40, 1, 0, missing = 0),
-    nv_ig_41_mais_semanas = if_else(semagestac >= 41 & semagestac <= 99, 1, 0, missing = 0),
+    nv_ig_41_semanas = if_else(semagestac == 41, 1, 0, missing = 0),
+    nv_ig_42_mais_semanas = if_else(semagestac >= 42 & semagestac < 99, 1, 0, missing = 0),
 
     # Tipo de prematuridade
     nv_prematuros = if_else(gestacao < 5, 1, 0, missing = 0),
@@ -179,8 +183,8 @@ df_indicadores_sinasc <- df_sinasc_nasc_em_hospital |>
 
     # Peso ao nascer
     nv_peso_menor_2500 = if_else(peso < 2500, 1, 0, missing = 0),
-    nv_peso_2500_a_3999 = if_else(peso >= 2500 & peso < 4000, 1, 0, missing = 0),
-    nv_peso_4000_mais = if_else(peso >= 4000, 1, 0, missing = 0),
+    nv_peso_2500_a_4499 = if_else(peso >= 2500 & peso < 4500, 1, 0, missing = 0),
+    nv_peso_4500_mais = if_else(peso >= 4500, 1, 0, missing = 0),
 
     # Tipo de baixo peso
     nv_baixo_peso = if_else(peso < 2500, 1, 0, missing = 0),
@@ -189,8 +193,13 @@ df_indicadores_sinasc <- df_sinasc_nasc_em_hospital |>
     nv_baixo_peso_1500_a_2499 = if_else(peso >= 1500 & peso < 2500, 1, 0, missing = 0),
 
     # Asfixia
-    nv_asfixia_2500g_mais = if_else(
+    nv_asfixia_sem_anomalia_2500g_mais = if_else(
       apgar5 < 7 & peso >= 2500 &
+        ((idanomal == 2) | ((idanomal == '' | is.na(idanomal)) & (codanomal == '' | is.na(codanomal)))),
+      1, 0 , missing = 0
+    ),
+    nv_sem_anomalia_2500g_mais = if_else(
+      peso >= 2500 &
         ((idanomal == 2) | ((idanomal == '' | is.na(idanomal)) & (codanomal == '' | is.na(codanomal)))),
       1, 0 , missing = 0
     ),
@@ -245,7 +254,8 @@ df_indicadores_sinasc <- df_sinasc_nasc_em_hospital |>
   ungroup()
 
 ## Juntando com a base auxiliar de CNES
-df_cnes_aux <- read.csv("data-raw/extracao-dos-dados/databases/df_cnes_aux.csv")
+df_cnes_aux <- read.csv("data-raw/extracao-dos-dados/databases/df_cnes_aux.csv") |>
+  select(cnes:nome_fantasia, mes, ano)
 
 df_indicadores_sinasc_final <- left_join(
   df_cnes_aux,

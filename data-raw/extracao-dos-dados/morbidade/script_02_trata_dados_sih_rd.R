@@ -34,12 +34,12 @@ for (estado in estados) {
   # Selecionando a tabela "aih" com todas as suas variáveis, ordenadas por AIHREF e DT_INTER
   df_aih <- dbGetQuery(con, "select * from aih order by AIHREF, DT_INTER")
 
-  # Lendo a base do SIH-RD com os dados brutos e selecionando as variáveis adicionais de diagnóstico
+  # Lendo a base do SIH-RD com os dados brutos e selecionando variáveis adicionais de diagnóstico e informações sociodemográficas
   df_aih_bruto <- fread(glue("data-raw/extracao-dos-dados/morbidade/databases/01_sih_rd/01_arquivos_brutos/{estado}_sih_rd_bruto_{anos[1]}_{anos[length(anos)]}.csv"), sep = ";") |>
     select(
-      MUNIC_MOV, CNES, N_AIH, ANO_CMPT, DIAG_SECUN, DIAGSEC1, DIAGSEC2, DIAGSEC3, DIAGSEC4,
+      MUNIC_MOV, CNES, N_AIH, MES_CMPT, ANO_CMPT, DIAG_SECUN, DIAGSEC1, DIAGSEC2, DIAGSEC3, DIAGSEC4,
       DIAGSEC5, DIAGSEC6, DIAGSEC7, DIAGSEC8, DIAGSEC9, CID_MORTE,
-      CID_ASSO, CID_NOTIF
+      CID_ASSO, CID_NOTIF, COD_IDADE, IDADE, RACA_COR, INSTRU
     ) |>
     mutate(N_AIH = as.character(N_AIH), CNES = as.character(CNES))
 

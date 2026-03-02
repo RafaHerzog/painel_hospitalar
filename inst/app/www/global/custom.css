@@ -7,72 +7,69 @@ body, .content-wrapper, .main-header, .main-sidebar {
   color: #0A1E3C !important;
 }
 
-/* Tamanhos de fonte para telas grandes */
-.fonte-titulos-pagina         { font-size: 33px !important;  }
-.fonte-destaque-caixas        { font-size: 32px !important;  }
-.fonte-titulos                { font-size: 26px !important;  }
-.fonte-titulos-sobre          { font-size: 21px !important;  }
-.fonte-subtitulos-sobre       { font-size: 19.5px !important;}
-.fonte-muito-grande           { font-size: 18px !important;  }
-.fonte-grande                 { font-size: 16px !important;  }
-.fonte-semi-grande            { font-size: 15px !important;  }
-.fonte-media                  { font-size: 14px !important;  }
-.fonte-aviso                  { font-size: 13px !important;  }
-.fonte-pequena                { font-size: 11px !important;  }
-
-/* Ajustes para telas pequenas */
-@media (max-width: 1920px) {
-  .fonte-titulos-pagina       { font-size: 29.7px !important; }
-  .fonte-destaque-caixas      { font-size: 28.8px !important; }
-  .fonte-titulos              { font-size: 23.4px !important; }
-  .fonte-titulos-sobre        { font-size: 18.9px !important; }
-  .fonte-subtitulos-sobre     { font-size: 17.5px !important; }
-  .fonte-muito-grande         { font-size: 16.2px !important; }
-  .fonte-grande               { font-size: 14.4px !important; }
-  .fonte-semi-grande          { font-size: 13.5px !important; }
-  .fonte-media                { font-size: 12.6px !important; }
-  .fonte-aviso                { font-size: 11.7px !important; }
-  .fonte-pequena              { font-size: 9.9px  !important; }
-}
-
-@media (max-width: 1280px) {
-  .fonte-titulos-pagina       { font-size: 26.4px !important; }
-  .fonte-destaque-caixas      { font-size: 25.6px !important; }
-  .fonte-titulos              { font-size: 20.8px !important; }
-  .fonte-titulos-sobre        { font-size: 16.8px !important; }
-  .fonte-subtitulos-sobre     { font-size: 15.6px !important; }
-  .fonte-muito-grande         { font-size: 14.4px !important; }
-  .fonte-grande               { font-size: 12.8px !important; }
-  .fonte-semi-grande          { font-size: 12px !important;   }
-  .fonte-media                { font-size: 11.2px !important; }
-  .fonte-aviso                { font-size: 10.4px !important; }
-  .fonte-pequena              { font-size: 8.8px  !important; }
-}
-
 :root {
-  --fonte-grande-size: 16px;
-  --fonte-semi-grande-size: 15px;
-  --fonte-media-size: 14px;
-  --fonte-pequena-size: 11px;
+  --tamanho-circle-btn: 8.75rem; /* 140px */
+
+  /* Base - Telas Grandes (Acima de 1920px) */
+  --fonte-destaque-caixas-size: 1.875rem;   /* 30px */
+  --fonte-titulos-size: 1.75rem;           /* 28px */
+  --fonte-subtitulos-size: 1.5rem;         /* 24px */
+  --fonte-titulos-sobre-size: 1.3125rem;   /* 21px */
+  --fonte-subtitulos-sobre-size: 1.2188rem; /* 19.5px */
+  --fonte-muito-grande-size: 1.125rem;     /* 18px */
+  --fonte-grande-size: 1rem;               /* 16px */
+  --fonte-semi-grande-size: 0.9375rem;     /* 15px */
+  --fonte-media-size: 0.875rem;            /* 14px */
+  --fonte-aviso-size: 0.8125rem;           /* 13px */
+  --fonte-pequena-size: 0.6875rem;         /* 11px */
 }
 
+/* Ajustes para 1920px */
 @media (max-width: 1920px) {
   :root {
-    --fonte-grande-size: 14.4px;
-    --fonte-semi-grande-size: 13.5px;
-    --fonte-media-size: 12.6px;
-    --fonte-pequena-size: 9.9px;
+    --tamanho-circle-btn: 7.875rem;
+    --fonte-destaque-caixas-size: 1.6875rem;  /* 27px */
+    --fonte-titulos-size: 1.575rem;           /* 25.2px */
+    --fonte-subtitulos-size: 1.35rem;         /* 21.6px */
+    --fonte-titulos-sobre-size: 1.1813rem;    /* 18.9px */
+    --fonte-subtitulos-sobre-size: 1.0938rem; /* 17.5px */
+    --fonte-muito-grande-size: 1.0125rem;     /* 16.2px */
+    --fonte-grande-size: 0.9rem;              /* 14.4px */
+    --fonte-semi-grande-size: 0.8438rem;      /* 13.5px */
+    --fonte-media-size: 0.7875rem;            /* 12.6px */
+    --fonte-aviso-size: 0.7313rem;            /* 11.7px */
+    --fonte-pequena-size: 0.6188rem;          /* 9.9px */
   }
 }
 
+/* Ajustes para 1280px */
 @media (max-width: 1280px) {
   :root {
-    --fonte-grande-size: 12.8px;
-    --fonte-semi-grande-size: 12px;
-    --fonte-media-size: 11.2px;
-    --fonte-pequena-size: 8.8px;
+    --tamanho-circle-btn: 7rem;
+    --fonte-destaque-caixas-size: 1.5rem;      /* 24px */
+    --fonte-titulos-size: 1.4rem;             /* 22.4px */
+    --fonte-subtitulos-size: 1.2rem;          /* 19.2px */
+    --fonte-titulos-sobre-size: 1.05rem;      /* 16.8px */
+    --fonte-subtitulos-sobre-size: 0.975rem;  /* 15.6px */
+    --fonte-muito-grande-size: 0.9rem;        /* 14.4px */
+    --fonte-grande-size: 0.8rem;              /* 12.8px */
+    --fonte-semi-grande-size: 0.75rem;        /* 12px */
+    --fonte-media-size: 0.7rem;               /* 11.2px */
+    --fonte-aviso-size: 0.65rem;              /* 10.4px */
+    --fonte-pequena-size: 0.55rem;            /* 8.8px */
   }
 }
+
+.fonte-destaque-caixas  { font-size: var(--fonte-destaque-caixas-size) !important; }
+.fonte-titulos          { font-size: var(--fonte-titulos-size) !important; }
+.fonte-titulos-sobre    { font-size: var(--fonte-titulos-sobre-size) !important; }
+.fonte-subtitulos-sobre { font-size: var(--fonte-subtitulos-sobre-size) !important; }
+.fonte-muito-grande     { font-size: var(--fonte-muito-grande-size) !important; }
+.fonte-grande           { font-size: var(--fonte-grande-size) !important; }
+.fonte-semi-grande      { font-size: var(--fonte-semi-grande-size) !important; }
+.fonte-media            { font-size: var(--fonte-media-size) !important; }
+.fonte-aviso            { font-size: var(--fonte-aviso-size) !important; }
+.fonte-pequena          { font-size: var(--fonte-pequena-size) !important; }
 
 
 .content-wrapper>.content {
@@ -86,17 +83,18 @@ body, .content-wrapper, .main-header, .main-sidebar {
 /* Div fixo no topo como placeholder */
 .div-placeholder {
   position: sticky;
-  top: 63px;
-  height: fit-content;
+  top: 63px; /* Altura da navbar */
+  height: auto; /* Deixamos auto para crescer com os chips */
   background-color: #EAF5FF;
   border-bottom: 1px solid rgba(10, 30, 60, 0.2);
-  border-radius: 4px;
+  border-radius: 0px 0px 4px 4px; /* Arredondar apenas embaixo */
   padding-top: 15px;
-  z-index: 100;
-  margin-top: -20px;
-  padding-bottom: 5px;
+  padding-bottom: 10px; /* Aumentado para dar respiro aos chips */
   padding-left: 1.4rem;
   padding-right: 1.4rem;
+  z-index: 101; /* Garante que fique acima de quase tudo */
+  margin-top: -10px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); /* Sombra leve para destacar no scroll */
 }
 
 
@@ -192,24 +190,32 @@ body, .content-wrapper, .main-header, .main-sidebar {
 /*------------------------------------*\
   # Navbar tabs
 \*------------------------------------*/
-
+/* --- 1. CONFIGURAÇÃO GERAL --- */
 .navbar-nav .nav-item {
   transform: translateY(-10%);
-}
-
-.navbar-dark .navbar-nav .nav-link {
-    color: rgb(255 255 255 / 80%);
 }
 
 .navbar-nav.sidebar-menu .nav-link {
   font-weight: 500;
   padding: .5rem 1rem;
   position: relative;
-  opacity: 0.9;
-  transition: all 0.1s ease-in-out;
+  opacity: 0.8;
+  transition: all 0.2s ease-in-out;
+  color: rgb(255 255 255 / 80%); /* Cor base */
 }
 
-/* 1. Barra animada: só para links que NÃO têm submenu (não são .dropdown) */
+.navbar-nav.sidebar-menu .nav-link:hover {
+  color: rgb(255 255 255 / 100%);
+  opacity: 1;
+}
+
+.navbar-dark .navbar-nav .show>.nav-link {
+    color: #fff;
+    opacity: 1;
+}
+
+/* --- 2. ABAS SIMPLES (sem dropdown) --- */
+/* Barra animada embaixo */
 .navbar-nav.sidebar-menu .nav-item:not(.dropdown) > .nav-link::after {
   content: "";
   position: absolute;
@@ -223,7 +229,7 @@ body, .content-wrapper, .main-header, .main-sidebar {
   transition: all 0.2s ease-in-out;
 }
 
-/* Hover mantém a animação da barra */
+/* Hover na aba simples */
 .navbar-nav.sidebar-menu > .nav-item:not(.dropdown) > .nav-link:hover {
   transform: scale(1.05);
   color: white;
@@ -233,102 +239,79 @@ body, .content-wrapper, .main-header, .main-sidebar {
   transform: scaleX(1.05);
 }
 
-.navbar-nav.sidebar-menu > .nav-item.dropdown > .nav-link:hover {
-  transform: scale(1.05);
-  color: white;
-}
-.navbar-nav.sidebar-menu .nav-item.dropdown.show > .nav-link {
-  transform: scale(1.05);
-  color: white;
-  opacity: 1;
-}
-
-/* Sempre mantém scale 1.05 se o dropdown estiver ativo (hover ou show) */
-.navbar-nav.sidebar-menu .nav-item.dropdown:hover > .nav-link,
-.navbar-nav.sidebar-menu .nav-item.dropdown.show > .nav-link {
-  transform: scale(1.05);
-  color: white;
-  opacity: 1;
-  transition: all 0.1s ease;
-}
-
-/* ESTADO ATIVO: mantém a barra e zoom só nos itens sem dropdown */
-.navbar-nav.sidebar-menu .nav-item:not(.dropdown).active > .nav-link[href="#shiny-tab-visao_geral"],
-.navbar-nav.sidebar-menu .nav-link[href="#shiny-tab-visao_geral"].active {
+/* Ativo na aba simples */
+.navbar-nav.sidebar-menu .nav-item:not(.dropdown).active > .nav-link,
+.navbar-nav.sidebar-menu .nav-link.active {
   color: white;
   font-weight: 600;
   transform: scale(1.05);
   opacity: 1;
-  transition: all 0.1s ease;
 }
-
-:not(#tab-visao_geral) .navbar-nav.sidebar-menu .nav-link.active {
-  font-weight: 600;
-  opacity: 1;
-  transition: all 0.1s ease;
-}
-
-.navbar-nav.sidebar-menu .nav-item:not(.dropdown) > .nav-link[href="#shiny-tab-visao_geral"].active::after {
+.navbar-nav.sidebar-menu .nav-item:not(.dropdown) > .nav-link.active::after {
   opacity: 1;
   transform: scaleX(1.05);
 }
 
-
-/* 2. Setinha: somente para o item que tem submenu */
-.navbar .dropdown-menu {
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease,
-    visibility 0.2s ease;
-  display: block;
-  pointer-events: none;
-}
-
-.navbar .dropdown.show > .dropdown-menu,
-.navbar .dropdown-submenu.show > .dropdown-menu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-/* corrige posição dos submenus */
-.navbar .dropdown-submenu {
-  position: relative;
-}
-
-.navbar .dropdown-submenu > .dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-left: .1rem;
-  margin-right: .1rem;
-}
-
-.navbar-nav.sidebar-menu .nav-item.dropdown > .nav-link:hover::after {
-  color: white;                  /* fica branca no hover, igual ao texto */
-}
-
+/* --- 3. ABAS DROPDOWN (Ex: Indicadores) --- */
+/* Estado NORMAL (Repouso) */
 .navbar-nav.sidebar-menu .nav-item.dropdown > .nav-link {
-  font-weight: normal;
-  color: /* cor padrão */;
-  transform: none;
+  font-weight: 400;
+  transform: scale(1);
   opacity: 0.8;
-  transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out, color 0.1s ease-in-out, font-weight 0.1s ease-in-out;
+  color: rgb(255 255 255 / 80%);
 }
 
-/* Adiciona apenas quando algum item filho está ativo (dropdown “ativo”) */
-.navbar-nav.sidebar-menu .nav-item.dropdown:has(.nav-link.active) > .nav-link {
+/* Estado HOVER ou ABERTO */
+.navbar-nav.sidebar-menu .nav-item.dropdown:hover > .nav-link,
+.navbar-nav.sidebar-menu .nav-item.dropdown.show > .nav-link {
   color: white !important;
-  font-weight: 600 !important;
-  transform: scale(1.05) !important;
   opacity: 1 !important;
-  transition: opacity 0.1s ease-in-out !important;
+  transform: scale(1.05) !important;
+  font-weight: 400 !important;
 }
 
-/* Dropdown */
+/* Estado ATIVO (Filho selecionado) - Controlado pelo JS .active-parent */
+.navbar-nav.sidebar-menu .nav-item.dropdown.active-parent > .nav-link {
+  color: white !important;
+  opacity: 1 !important;
+  transform: scale(1.05) !important;
+  font-weight: 700 !important;
+}
+
+/* Forçando o estilo de seta do Bootstrap */
+.navbar-nav.sidebar-menu .nav-item.dropdown > .nav-link::after {
+  content: "" !important;
+  display: inline-block;
+
+  /* Desenha o triângulo */
+  width: 0;
+  height: 0;
+  margin-left: .255em;
+  vertical-align: .255em;
+  border-top: .3em solid;
+  border-right: .3em solid transparent;
+  border-bottom: 0;
+  border-left: .3em solid transparent;
+
+  /* Remove propriedades da "barra animada" caso tenham vazado */
+  position: static;
+  background-color: transparent;
+  transform: none;
+
+  /* Acompanha a cor do texto */
+  opacity: 0.8;
+  color: inherit;
+}
+
+/* Setinha fica 100% visível quando Hover ou Ativo */
+.navbar-nav.sidebar-menu .nav-item.dropdown:hover > .nav-link::after,
+.navbar-nav.sidebar-menu .nav-item.dropdown.show > .nav-link::after,
+.navbar-nav.sidebar-menu .nav-item.dropdown.active-parent > .nav-link::after {
+  opacity: 1 !important;
+  border-top-color: white; /* Garante cor branca pura */
+}
+
+/* --- 4. ESTILIZAÇÃO DO MENU FLUTUANTE --- */
 .navbar-nav.sidebar-menu .dropdown-menu {
   background-color: #0A1E3C;
   border-radius: 6px;
@@ -336,39 +319,63 @@ body, .content-wrapper, .main-header, .main-sidebar {
   min-width: max-content;
   z-index: 1050;
   border: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  display: block;
+  pointer-events: none;
 }
 
-/* Subitens do dropdown */
-.navbar-nav.sidebar-menu .dropdown-menu .nav-link {
-  padding: 0.5rem 1.75rem;
-  line-height: 1.5;
-  font-weight: 500;
-  color: white !important;
-  background-color: transparent;
-  border: none;
-  white-space: nowrap;
-}
-
-/* Ao passar o mouse sobre o item do dropdown, aumenta opacidade */
-.navbar-nav.sidebar-menu .dropdown-menu .nav-link:hover {
-  opacity: 1 !important;
-  transition: opacity 0.15s ease-in-out;
-}
-
-/* Define opacidade inicial dos links para 0.8 (ou menos, se quiser) */
-.navbar-nav.sidebar-menu .dropdown-menu .nav-link {
-  opacity: 0.8;
-  transition: opacity 0.15s ease-in-out;
-}
-
-/* Quando o dropdown pai tiver um filho ativo, destaque o link de 1º nível */
-.navbar-nav.sidebar-menu .nav-item.dropdown.has-active-child > .nav-link {
-  transform: scale(1.05);
-  color: white !important;
+.navbar-nav.sidebar-menu .dropdown.show > .dropdown-menu,
+.navbar-nav.sidebar-menu .dropdown-submenu.show > .dropdown-menu {
   opacity: 1;
-  font-weight: 600;
-  transition: all 0.1s ease;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
 }
+
+/* Ajuste submenus */
+.navbar-nav.sidebar-menu .dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -5px;
+  margin-left: 0.1rem;
+}
+
+/* --- DESTAQUE DOS ITENS DO DROPDOWN --- */
+
+/* Alvos: Links simples dentro do dropdown e o link principal de um Submenu */
+.navbar-nav.sidebar-menu .dropdown-menu .nav-item .nav-link:hover,
+.navbar-nav.sidebar-menu .dropdown-submenu:hover > .nav-link {
+  /* Cor de fundo: um azul levemente mais claro que o Navy do menu (#142d55)
+     ou um branco translúcido (rgba(255,255,255,0.1)) */
+  background-color: rgba(255, 255, 255, 0.1) !important;
+
+  color: #FFFFFF !important; /* Texto branco puro no hover */
+  opacity: 1 !important;
+
+  /* Arredondamento das bordas para um visual moderno */
+  border-radius: 4px;
+
+  /* Transição suave */
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Ajuste de margem para que o destaque não encoste nas bordas do menu */
+.navbar-nav.sidebar-menu .dropdown-menu .nav-item .nav-link,
+.navbar-nav.sidebar-menu .dropdown-submenu > .nav-link {
+  margin: 2px 8px;
+  padding: 8px 16px; /* Aumenta a área clicável e o preenchimento do destaque */
+}
+
+/* Garante que o parágrafo (p) e span dentro do link não tenham margens que quebrem o highlight */
+.navbar-nav.sidebar-menu .dropdown-menu .nav-item .nav-link p,
+.navbar-nav.sidebar-menu .dropdown-menu .nav-item .nav-link span {
+  margin-bottom: 0 !important;
+  display: inline-block;
+}
+
 
 
 /*------------------------------------*\
@@ -390,8 +397,8 @@ body, .content-wrapper, .main-header, .main-sidebar {
 
 /* Aumentando o padding dos nav-items */
 .navbar-expand .navbar-nav .nav-link {
-  padding-left: 2.8rem;
-  padding-right: 2.8rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 /* Retirando a sidebar para telas maiores */
@@ -442,7 +449,7 @@ body, .content-wrapper, .main-header, .main-sidebar {
 .accordion-header-container {
   transition: opacity 0.3s ease;
   opacity: 1;
-  cursor: pointer;
+  cursor: auto;
 }
 
 .accordion-header {
@@ -456,18 +463,22 @@ body, .content-wrapper, .main-header, .main-sidebar {
   color: rgba(10, 30, 60, 0.8); /* alpha controla intensidade sobre o fundo branco */
 }
 
+
+/*
 .accordion-header-container:hover .accordion-header {
   color: #0A1E3C;
 }
 
 .accordion-header-container:hover {
-  transform: translateY(-1.5px);           /* sobe levemente */
+  transform: translateY(-1.5px);
   transition: transform 0.3s ease;
 }
+*/
+
 
 .accordion-body {
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 16px;
+  padding-right: 16px;
   margin-top: -14px;
   background-color: rgba(0, 0, 0, 0.025);
   border-radius: 10px;
@@ -547,8 +558,6 @@ body, .content-wrapper, .main-header, .main-sidebar {
   width: 100% !important;
 }
 
-
-
 /* Tirando o crescimento do ícone ao hover da caixinha */
 .small-box:hover .icone-valuebox {
   transform: scale(1);
@@ -573,7 +582,6 @@ body, .content-wrapper, .main-header, .main-sidebar {
   }
 }
 
-
 /* Coluna da direita: título e conteúdo */
 .value-box-custom.has-widget .value-text {
   flex: 1;
@@ -593,6 +601,8 @@ body, .content-wrapper, .main-header, .main-sidebar {
 
 /* Título normal (sem gráfico) */
 .value-box-custom .value-title {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   font-weight: normal;
   color: #0A1E3C;
   margin: 0;
@@ -625,7 +635,7 @@ body, .content-wrapper, .main-header, .main-sidebar {
 
 /* Aumenta o padding das caixinhas */
 .small-box {
-  padding: 20px !important;
+  padding: 17px !important;
   background-color: #FCFCFD !important;
 }
 
@@ -654,6 +664,85 @@ body, .content-wrapper, .main-header, .main-sidebar {
   align-items: center;
 }
 
+#indicadores_1-vb_calculo .small-box {
+  min-height: 240px;
+  display: grid;
+  align-items: center;
+}
+
+#indicadores_1-vb_fonte .small-box {
+  min-height: 240px;
+  display: grid;
+  align-items: center;
+}
+
+
+/*------------------------------------*\
+  # ValueBox de completude da informação
+\*------------------------------------*/
+#indicadores_1-card-completude .card-header {
+  display: none;
+}
+
+#indicadores_1-card-completude .card-body {
+  padding: 17px !important;
+  min-height: 240px;
+  display: grid;
+  align-items: center;
+}
+
+.completude-box { padding: 5px; }
+.label-caps { text-transform: uppercase; letter-spacing: 0.05em; font-weight: normal; color: #0A1E3C; margin-bottom: 6px; display: block; }
+
+.completude-status { font-weight: 800; line-height: 1.2; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+.completude-desc { color: #0A1E3C; margin-bottom: 4px; }
+.completude-desc b { color: #0A1E3C; font-weight: 700; }
+
+.status-inadequada { color: #f59e0b; }
+.status-boa        { color: #10b981; }
+.status-excelente  { color: #059669; }
+.status-na         { color: #0A1E3C; }
+
+.completude-variaveis { color: rgb(10 30 60 / 80%); font-weight: normal;}
+
+/* Botão Premium Ghost - Versão Dark Blue */
+.btn-detalhes-completude {
+  background: transparent;
+  border: 1.5px solid #0A1E3C20; /* Borda sutil com o azul do título */
+  color: #0A1E3C;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 8px 16px;
+  border-radius: 6px;
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer;
+  text-decoration: none !important;
+}
+
+.btn-detalhes-completude:hover {
+  background: #0A1E3C08; /* Fundo muito leve no hover */
+  border-color: #0A1E3C;
+  color: #000; /* Escurece o texto no hover para contraste */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(10, 30, 60, 0.08);
+}
+
+/* Micro-animação do ícone */
+.btn-detalhes-completude i {
+  margin-left: 10px;
+  transition: transform 0.3s ease;
+}
+
+.btn-detalhes-completude:hover i {
+  transform: translateX(4px);
+}
+
 
 /*------------------------------------*\
   # Ajustes em colunas e cards
@@ -661,6 +750,10 @@ body, .content-wrapper, .main-header, .main-sidebar {
 
 .card-body, .card {
   overflow: visible;
+}
+
+.card-body {
+  padding: 1rem 1.25rem;
 }
 
 /* Cor do background dos títulos dos cards */
@@ -684,18 +777,18 @@ body, .content-wrapper, .main-header, .main-sidebar {
 #card-filters .card-body {
   max-height: calc(100dvh - 330px);
   overflow-y: auto;
-  padding: 1.25rem 1rem 1rem 1rem;
+  padding: 1rem 1rem 1rem 1rem;
   transition: max-height 0.4s ease;
   margin-top: 10px;
 }
 
 .navbar-show-title #card-filters .card-body {
-  max-height: calc(100dvh - 320px);
+  max-height: calc(100dvh - 363px);
 }
 
 @media (min-width: 2560px) {
   .navbar-show-title #card-filters .card-body {
-    max-height: calc(100dvh - 240px);
+    max-height: calc(100dvh - 441px) !important;
   }
 }
 
@@ -715,18 +808,18 @@ body, .content-wrapper, .main-header, .main-sidebar {
 
 .conditional-sticky {
   position: sticky;
-  top: 146px !important;
+  top: 192px !important;
 }
 
 @media (max-width: 1920px) {
   .conditional-sticky {
-    top: 143px !important;
+    top: 185px !important;
   }
 }
 
 @media (max-width: 1280px) {
   .conditional-sticky {
-    top: 138px !important;
+    top: 171px !important;
   }
 }
 
@@ -769,9 +862,16 @@ body, .content-wrapper, .main-header, .main-sidebar {
 }
 
 .custom-guideline-box {
-  border-left: 2px solid #0A1E3C;
-  padding-left: 15px;
+  border-left: 2px solid #D1D5DB; /* Cor neutra por padrão (ex: cinza claro) */
+  padding-left: 8px;
   margin-left: 18px;
+  transition: border-color 0.3s ease; /* Suaviza a troca de cor */
+}
+
+/* A linha fica escura quando o input ganha foco OU quando o mouse passa por cima */
+.custom-guideline-box:focus-within,
+.custom-guideline-box:hover {
+  border-left-color: #0A1E3C;
 }
 
 /*------------------------------------*\
@@ -783,65 +883,82 @@ body, .content-wrapper, .main-header, .main-sidebar {
   display: none !important;
 }
 
-/* Dropdown */
-.selectize-dropdown-content .option {
-  background-color: white !important;
-  color: #0A1E3C !important;
-}
-
-.selectize-dropdown-content .active,
-.selectize-dropdown-content .option:hover,
-.selectize-dropdown-content .option:focus {
-  background-color: #0A1E3C !important;
-  color: white !important;
-}
-
-
-/* Input padrão */
 .selectize-control.single .selectize-input {
-  background-color: white !important;
-  color: #0A1E3C !important;
-  border-width: 1px;
-  border-color: rgba(10, 30, 60, 0.4) !important;
-  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  font-size: var(--fonte-media-size);
+  border-radius: 12px !important;
+  border: 1.5px solid #E3E6EA !important;
+  padding: 10px 30px 10px 10px !important;
+  transition: all .2s ease;
 }
 
-.selectize-input>* {
-  padding-right: 5px !important;
+.selectize-dropdown, .selectize-dropdown.form-control {
+  width: min-content !important;
 }
 
-.form-control.selectize-control {
-  padding-right: 5px !important;
+/* Hover: leve realce */
+.selectize-control.single .selectize-input:hover {
+  border-color: rgba(10,30,60,0.55) !important;
 }
 
-.selectize-input.focus {
-  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 4px rgba(10, 30, 60, 0.2) !important;
-  border-color: rgba(10, 30, 60, 0.8) !important;
-  border-width: 1px;
+/* Focus: halo moderno */
+.selectize-control.single .selectize-input.focus {
+  border-color: #0A1E3C !important;
+  box-shadow: 0 0 0 4px rgba(10,30,60,0.12) !important;
 }
 
+/* Remove sombra antiga */
 .selectize-control.single .selectize-input:focus {
-  border-color: rgba(10, 30, 60, 0.8) !important;
-  box-shadow: 0 0 4px rgba(10, 30, 60, 0.6) !important;
   outline: none !important;
 }
 
-.selectize-control.single .selectize-input:hover {
-  box-shadow: 0 0 4px rgba(10, 30, 60, 0.6) !important;
-  border-color: rgba(10, 30, 60, 0.8) !important;
+/* Dropdown */
+.selectize-dropdown {
+  font-size: var(--fonte-media-size);
+  border-radius: 12px !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
+  border: none !important;
+  padding: 8px 0 !important;
 }
 
-.form-control {
-  font-weight: 500 !important;
-  color: #0A1E3C !important;
+/* Base */
+.selectize-dropdown-content .option {
+  border-radius: 12px;
+  padding: 7px 15px !important; /* Espaçamento premium para o clique */
+  font-size: var(--fonte-media-size);
+  transition: background .15s ease;
   background-color: white;
-  border-width: 1px;
-  border-color: rgba(10, 30, 60, 0.4) !important;
+  color: #0A1E3C;
+}
+
+/* Hover (qualquer item sob o mouse) */
+.selectize-dropdown-content .option:hover {
+  background: rgba(10,30,60,0.06);
+  color: #0A1E3C;
+}
+
+/* Item realmente selecionado */
+.selectize-dropdown-content .option.selected {
+  background: #0A1E3C;
+  color: white;
+}
+
+/* Se passar o mouse na selecionada, mantém azul */
+.selectize-dropdown-content .option.selected:hover {
+  background: #0A1E3C;
+  color: white;
+}
+
+.selectize-input>* {
+  padding-right: 10px !important;
+}
+
+.form-control.selectize-control {
+  padding-right: 4px !important;
 }
 
 /* Tamanho da fonte no dropdown */
 .form-control {
-  font-size: var(--fonte-semi-grande-size) !important;
+  font-size: var(--fonte-media-size) !important;
 }
 
 #input_categoria + .selectize-control .selectize-dropdown{
@@ -850,87 +967,115 @@ body, .content-wrapper, .main-header, .main-sidebar {
   margin-bottom: 4px;
 }
 
+/*------------------------------------*\
+  # Virtual Select - alinhado ao Selectize
+\*------------------------------------*/
+.vscomp-ele {
+  width: 99% !important;
+}
+
+@media (max-width: 1920px){
+  .vscomp-ele {
+    width: 97% !important;
+  }
+}
+
+@media (max-width: 1280px){
+  .vscomp-ele {
+    width: 94% !important;
+  }
+}
+
+/* Wrapper base */
 .vscomp-wrapper {
+  font-size: var(--fonte-media-size) !important;
   font-weight: 500 !important;
   font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   color: #0A1E3C !important;
-  background-color: white !important;
+  background: white !important;
 }
 
-.vscomp-wrapper {
-  font-size: var(--fonte-semi-grande-size) !important;
-}
-
-.vscomp-option.group-title .vscomp-option-text {
-    cursor: default;
-    opacity: .7;
-}
-
-.vscomp-option.group-option {
-  height: 45px !important;
-}
-
+/* === INPUT (equivalente ao .selectize-input) === */
 .vscomp-toggle-button {
+  font-size: var(--fonte-media-size) !important;
+  border-radius: 12px !important;
+  border: 1.5px solid #E3E6EA !important;
+  padding: 10px 30px 10px 10px !important;
+  background: white !important;
   color: #0A1E3C !important;
-  background-color: white !important;
-  border-radius: 4px;
-  border-width: 1px;
-  border-color: rgba(10, 30, 60, 0.4) !important;
-  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  transition: all .2s ease !important;
 }
 
-.vscomp-wrapper.focused .vscomp-toggle-button, .vscomp-wrapper:focus .vscomp-toggle-button {
+/* Hover leve */
+.vscomp-toggle-button:hover {
+  border-color: rgba(10,30,60,0.55) !important;
+  box-shadow: none !important;
+}
+
+/* Focus moderno */
+.vscomp-wrapper.focused .vscomp-toggle-button {
+  border-color: #0A1E3C !important;
+  box-shadow: 0 0 0 4px rgba(10,30,60,0.12) !important;
+}
+
+.vscomp-wrapper:focus .vscomp-toggle-button {
   box-shadow: none;
 }
 
-.vscomp-toggle-button:hover {
-  box-shadow: 0 0 4px rgba(10, 30, 60, 0.6) !important;
-  border-color: rgba(10, 30, 60, 0.8) !important;
+/* === DROPDOWN === */
+.vscomp-wrapper * {
+  border-radius: 12px !important;
+}
+
+.vscomp-options-container {
+  border-radius: 12px !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
+  border: none !important;
+  padding: 8px 0 !important;
+}
+
+/* === OPTIONS === */
+.vscomp-option.group-option {
+    padding-left: 30px !important;
+}
+
+.vscomp-option {
+  background: white !important;
+  color: #0A1E3C !important;
+  transition: background .15s ease !important;
 }
 
 .vscomp-option-text {
   white-space: normal;
-  color: #0A1E3C !important;
 }
 
 .vscomp-options-list {
   max-height: 300px !important;
 }
 
-.vscomp-value {
-  white-space: normal;
-}
-
-.vscomp-wrapper.multiple .vscomp-option.selected .checkbox-icon::after {
-  border-color: #0A1E3C;
-  border-left-color: rgba(0, 0, 0, 0);
-  border-top-color: rgba(0, 0, 0, 0);
-}
-
-/* hover geral */
+/* Hover normal (cinza claro igual Selectize) */
 .vscomp-option:hover,
 .vscomp-option.vscomp-option--highlight {
-  background-color: #0A1E3C !important;
-  color: #FFFFFF !important;
+  background: rgba(10,30,60,0.06) !important;
+  color: #0A1E3C !important;
 }
 
-/* texto e ícones internos */
-.vscomp-option:hover *,
-.vscomp-option.vscomp-option--highlight * {
-  color: #FFFFFF !important;
+/* Item realmente selecionado */
+.vscomp-option.selected {
+  background: #0A1E3C !important;
+  color: white !important;
 }
 
-/* bordas do ícone no hover */
-.vscomp-option:hover .checkbox-icon::after,
-.vscomp-option.vscomp-option--highlight .checkbox-icon::after {
-  border-color: #FFFFFF !important;
+/* Hover sobre selecionado mantém azul */
+.vscomp-option.selected:hover {
+  background: #0A1E3C !important;
+  color: white !important;
 }
 
-/* para ícone de item selecionado (checkmark rotacionado) */
-.vscomp-wrapper.multiple .vscomp-option:hover.selected .checkbox-icon::after {
-  border-color: #FFFFFF !important;
-  border-left-color: transparent !important;
-  border-top-color: transparent !important;
+/* Força texto interno */
+.vscomp-option.selected *,
+.vscomp-option.selected:hover * {
+  color: white !important;
 }
 
 
@@ -939,7 +1084,7 @@ body, .content-wrapper, .main-header, .main-sidebar {
 \*------------------------------------*/
 
 .pretty {
-  font-size: var(--fonte-semi-grande-size) !important;
+  font-size: var(--fonte-media-size) !important;
 }
 
 .pretty.p-rotate:not(.p-default) input:checked~.state .icon, .pretty.p-rotate:not(.p-default) input:checked~.state .svg, .pretty.p-rotate:not(.p-default) input:checked~.state img, .pretty.p-rotate:not(.p-default) input:checked~.state label:after, .pretty.p-rotate:not(.p-default) input:checked~.state label:before {
@@ -965,13 +1110,47 @@ body, .content-wrapper, .main-header, .main-sidebar {
 
 
 /*------------------------------------*\
+  # PrettySwitch
+\*------------------------------------*/
+.pretty.p-switch.p-fill input:checked~.state.p-success:before {
+    background-color: #0A1E3C !important;
+}
+
+/* Por padrão, peso 500 */
+.pretty.p-switch .state label span {
+  font-weight: 500;
+}
+
+/* Quando ativado: peso 600 */
+.pretty.p-switch.p-fill input:checked ~ .state label span {
+  font-weight: 600;
+}
+
+.pretty.p-switch input:checked~.state.p-success:before {
+    border-color: #0A1E3C;
+}
+
+.pretty.p-switch.p-fill input:checked~.state label:after {
+    border-color: #0A1E3C;
+}
+
+.pretty.p-switch .state:before {
+    border: 1px solid #0A1E3C80;
+}
+
+.pretty.p-switch .state label:after {
+    background-color: #0A1E3C !important;
+}
+
+
+/*------------------------------------*\
   # Botões de atualizar/redefinir
 \*------------------------------------*/
 .nav-btn {
   border-radius: 10px;
   font-weight: bold;
   cursor: pointer;
-  transition: all .3s ease !important;
+  transition: all .2s ease !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1000,28 +1179,196 @@ body, .content-wrapper, .main-header, .main-sidebar {
 .btn-redefinir:hover {
   background-color: #F0F0F0 !important;   /* cinza bem claro de highlight */
   border-color: #CFCFCF !important;       /* cinza médio */
-  color: #0A1E3C !important;              /* mantém azul escuro */
 }
 
 
-.btn-atualizar:hover i {
-  transform: rotate(180deg);
+.btn-redefinir:hover i, .btn-atualizar:hover i {
+  transform: rotate(-180deg);
 }
 
 .nav-btn i {
-  transition: all .3s ease !important;
+  transition: all .2s ease !important;
 }
 
 .nav-btn:hover:not(.disabled) {
-  transform: translateY(-2px) scale(1.02);
   filter: brightness(1.05);
 }
 
+/* Estilo para o botão quando desabilitado por shinyjs */
+.btn-atualizar[disabled],
+.btn-atualizar[disabled]:hover {
+  background-color: #A0D2FF !important; /* Um azul bem mais claro/lavado */
+  border-color: #A0D2FF !important;
+  color: #FFFFFF !important;
+  cursor: not-allowed !important;
+  filter: grayscale(0.4); /* Deixa um pouco mais cinza */
+  opacity: 0.7;
+  transform: none !important; /* Remove qualquer efeito de hover */
+}
+
+/* Garante que o ícone não rode se estiver desabilitado */
+.btn-atualizar[disabled]:hover i {
+  transform: none !important;
+}
 
 /*------------------------------------*\
   # Botões de navegação entre abas
 \*------------------------------------*/
-.div-botoes-cancer {
+/* Remove o fundo padrão e arredonda a janela - MUDANÇA NO OVERFLOW */
+.premium-modal .modal-content {
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+  /* VITAL: Permite que o dropdown do VirtualSelect saia da janela */
+  overflow: visible !important;
+}
+
+/* Força o dropdown do Selectize a ficar ACIMA do Modal (O modal tem z-index 1050) */
+.selectize-dropdown {
+  z-index: 1060 !important;
+}
+
+.premium-modal .selectize-input {
+  font-size: var(--fonte-grande-size) !important;
+}
+
+/* Dropdown do modal */
+.selectize-dropdown.dropdown-modal-premium {
+  font-size: var(--fonte-grande-size) !important;
+}
+
+/* Opções dentro do dropdown */
+.selectize-dropdown.dropdown-modal-premium .option {
+  font-size: var(--fonte-grande-size) !important;
+}
+
+/* Esconde as linhas e estilos feios do Shiny nativo */
+.premium-modal .modal-header,
+.premium-modal .modal-footer {
+  display: none !important;
+}
+.premium-modal .modal-body {
+  padding: 0 !important;
+}
+
+/* --- (MANTIDO) Nosso Cabeçalho Customizado --- */
+.pm-header {
+  background: linear-gradient(
+    135deg,
+    #0A1E3C 0%,
+    #102a52 100%
+  );
+  box-shadow: inset 0 -1px 0 rgba(255,255,255,0.05);
+  color: white;
+  padding: 40px 30px 30px 30px;
+  text-align: center;
+  position: relative;
+  /* Como o overflow está visible, forçamos as bordas aqui */
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+.pm-icon {
+  background: rgba(255, 255, 255, 0.08);
+  width: 80px;
+  height: 80px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 2.5rem;
+  color: #32A0FF;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.pm-title {
+  font-weight: 700;
+  font-size: var(--fonte-subtitulos-size);
+  margin: 0;
+  line-height: 1.2;
+}
+.pm-subtitle {
+  font-size: var(--fonte-titulos-sobre-size);
+  color: #A9C2E3;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+/* --- Nosso Corpo Customizado --- */
+.pm-body {
+  padding: 40px 30px;
+  background-color: #ffffff;
+}
+.pm-label {
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-size: var(--fonte-muito-grande-size);
+  display: block;
+}
+
+/* --- Nosso Rodapé Customizado - BOTÕES CORRIGIDOS --- */
+.pm-footer {
+  background-color: #F8F9FA;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between; /* Um na extrema esquerda, outro na direita */
+  align-items: center;
+  border-top: 1px solid #E9ECEF;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* Botão inspirado no "btn-redefinir" original */
+.pm-btn-cancel {
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #FFFFFF !important;
+  color: #0A1E3C !important;
+  border: 1.6px solid #E0E0E0 !important;
+  padding: 8px 16px;
+  font-size: var(--fonte-semi-grande-size, 15px);
+  min-width: 100px;
+  transition: all .2s ease;
+}
+.pm-btn-cancel:hover {
+  background-color: #F0F0F0 !important;
+  border-color: #CFCFCF !important;
+  transform: translateY(-1px);
+}
+
+/* Botão inspirado no "btn-atualizar" original */
+.pm-btn-submit {
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #32A0FF !important;
+  color: #ffffff !important;
+  border: 1.6px solid #32A0FF !important;
+  padding: 8px 16px;
+  font-size: var(--fonte-semi-grande-size, 15px);
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all .2s ease;
+}
+.pm-btn-submit:hover {
+  background-color: #1e8ae6 !important;
+  border-color: #1e8ae6 !important;
+  color: #ffffff !important; /* Trava para não ficar preto no Bootstrap */
+  transform: translateY(-1px);
+}
+
+/* Animação do ícone ao passar o mouse */
+.pm-btn-submit i {
+  transition: all 0.2s ease;
+}
+.pm-btn-submit:hover i {
+  transform: translateX(4px); /* A setinha dá um empurrão lateral em vez de girar */
+}
+
+.div-botoes-blocos {
   display: flex;
   justify-content: center;
   gap: 110px;
@@ -1031,7 +1378,7 @@ body, .content-wrapper, .main-header, .main-sidebar {
 }
 
 @media (max-width: 1200px) {
-  .div-botoes-cancer {
+  .div-botoes-blocos {
     gap: 30px;
   }
 }
@@ -1042,12 +1389,12 @@ body, .content-wrapper, .main-header, .main-sidebar {
   align-items: center;
   text-decoration: none;
   text-align: center;
-  width: 140px;
+  width: var(--tamanho-circle-btn);
 }
 
 .circle-btn .circle-icon {
-  width: 140px;
-  height: 140px;
+  width: var(--tamanho-circle-btn);
+  height: var(--tamanho-circle-btn);
   border-radius: 50%;
   padding: 15px;
   background-color: #f7f7f7;
@@ -1064,15 +1411,14 @@ body, .content-wrapper, .main-header, .main-sidebar {
 .circle-btn .circle-label {
   margin-top: 12px;
   font-weight: 600;
-  font-size: 16px;
+  font-size: var(--fonte-grande-size);
   color: #0A1E3C;
 }
 
-/* Estilo 1 — borda simples */
-.circle-btn-style1 .circle-icon {
+.circle-btn .circle-icon {
   border: 2px solid #0A1E3C;
 }
-.circle-btn-style1:hover .circle-icon {
+.circle-btn:hover .circle-icon {
   background-color: #0A1E3C;
 }
 
@@ -1119,15 +1465,21 @@ body, .content-wrapper, .main-header, .main-sidebar {
   font-size: var(--fonte-media-size) !important;
 }
 
-.highcharts-axis, .highcharts-legend-item {
-  font-size: var(--fonte-grande-size) !important;
+.highcharts-data-label text, .highcharts-point text, .highcharts-axis-labels {
+  font-size: var(--fonte-media-size) !important;
 }
 
-.highcharts-axis-labels {
-  font-size: var(--fonte-semi-grande-size) !important;
+.highcharts-axis text, .highcharts-legend-item text {
+  font-size: var(--fonte-aviso-size) !important;
 }
 
-.highcharts-data-label text, .highcharts-point text {
+.highcharts-legend-title text {
+  font-size: var(--fonte-aviso-size) !important;
+  font-weight: normal !important;
+  fill: rgb(51, 51, 51) !important;
+}
+
+.highcharts-caption {
   font-size: var(--fonte-pequena-size) !important;
 }
 
@@ -1135,19 +1487,38 @@ body, .content-wrapper, .main-header, .main-sidebar {
 /*------------------------------------*\
   # Dropdown de filtros
 \*------------------------------------*/
-/* Ícone de filtro */
+.div-botao-filtros {
+  display: inline-flex;
+  gap: 8px; /* Um pouco mais de espaço respira melhor */
+  padding: 4px 12px; /* Padding um pouco maior para ficar "clicável" */
+
+  /* A chave do moderno: borda fina e semitransparente */
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.9); /* Texto não é 100% branco para não ofuscar */
+
+  cursor: pointer;
+  transition: all 0.2s ease-in-out; /* Transição mais rápida (snappy) */
+
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Aplica o estilo se estiver com Hover OU se tiver a classe .active (menu aberto) */
+.div-botao-filtros:hover,
+.div-botao-filtros.active {
+  border-color: rgba(255, 255, 255, 1); /* Borda branca sólida */
+  background-color: rgba(255, 255, 255, 0.08); /* Fundo levíssimo */
+  color: #fff; /* Texto branco puro */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* (Opcional) Um brilho extra sutil fica chique */
+}
+
 .filter-icon {
   background: none;
   border: none;
-  color: #ffffff;
-  cursor: pointer;
-  font-size: 18px;
+  color: inherit; /* Herda a cor do pai */
+  font-size: 16px; /* Ícones menores são mais elegantes */
   padding: 0;
-  transition: color 0.2s ease;
-}
-
-.filter-icon:hover {
-  color: #d4d4d4;
 }
 
 /* remove foco e borda branca */
@@ -1173,12 +1544,13 @@ body, .content-wrapper, .main-header, .main-sidebar {
   opacity: 0;
   transform: translateY(-4px);
   transition: opacity 0.15s ease, transform 0.15s ease;
+  cursor: default;
 }
 
 .filter-dropdown.show {
   display: block;
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(5px);
 }
 
 .filter-dropdown.hide {
@@ -1230,18 +1602,41 @@ body, .content-wrapper, .main-header, .main-sidebar {
   line-height: 1.2 !important;
 }
 
-/* mantém o prettyRadioButtons alinhado corretamente */
-.filter-dropdown .pretty .state label {
+/* Ajustando levemente o tamanho do prettySwitch */
+.pretty.p-switch .state:before {
+    width: 2em;
+    height: calc(1em);
+    top: calc((0% - (100% - 1em)) - 8%);
+}
+
+.filter-dropdown .pretty .state label:after, .pretty .state label:before {
+    width: calc(1em + 2px);
+    height: calc(1em + 2px);
+    top: calc((0% - (100% - 1em)) - 6%);
+}
+
+
+/* Mantém o prettyRadioButtons alinhado corretamente (IGNORANDO switches) */
+.filter-dropdown .pretty:not(.p-switch) .state label {
   display: inline-block !important;
   align-items: center !important;
   line-height: normal !important;
   margin-bottom: 0 !important;
 }
 
-.filter-dropdown .pretty .state label:after,
-.filter-dropdown .pretty .state label:before,
-.filter-dropdown .pretty.p-icon .state .icon {
+.filter-dropdown .pretty:not(.p-switch) .state label:after,
+.filter-dropdown .pretty:not(.p-switch) .state label:before,
+.filter-dropdown .pretty.p-icon:not(.p-switch) .state .icon {
   top: 0% !important;
+}
+
+/* Modifica o tamanho da fonte do prettyRadioButtons */
+.filter-dropdown .pretty {
+  font-size: var(--fonte-media-size) !important;
+}
+
+.filter-dropdown .form-group {
+  margin-bottom: 0.3rem;
 }
 
 /* Garantia extra para os labels dos checkboxes */
@@ -1262,18 +1657,22 @@ body, .content-wrapper, .main-header, .main-sidebar {
   transform: translateY(1px);
 }
 
-/* Label do checkboxGroupInput com fonte-grande */
+/* Label do checkboxGroupInput com fonte-media */
 .filter-dropdown .control-label {
-  font-size: var(--fonte-grande-size) !important;
+  font-size: var(--fonte-media-size) !important;
 }
 .filter-dropdown .control-label.fonte-grande {
   font-size: inherit !important;
 }
 
-/* Opções (checkboxes) com fonte-semi-grande */
+/* Opções (checkboxes) com fonte-media */
 .filter-dropdown .shiny-options-group,
 .filter-dropdown .shiny-options-group label {
-  font-size: var(--fonte-semi-grande-size) !important;
+  font-size: var(--fonte-media-size) !important;
+}
+
+.filter-dropdown .shiny-input-checkboxgroup label~.shiny-options-group, .filter-dropdown .shiny-input-radiogroup label~.shiny-options-group {
+    padding: 0 0 0 10px;
 }
 
 @keyframes fadeIn {
@@ -1325,4 +1724,132 @@ body, .content-wrapper, .main-header, .main-sidebar {
 /* animação de entrada */
 @keyframes fadeInTooltip {
   to { opacity: 1; }
+}
+
+
+/*------------------------------------*\
+  # Chips de filtros ativos
+\*------------------------------------*/
+/* Container que abrigará todos os chips */
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 5px 0px;
+  align-items: center;
+  background: transparent; /* Removido fundos extras */
+}
+
+/* O Chip individual */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.6); /* Branco semi-transparente para sumir no azul */
+  color: #0A1E3C; /* Seu Navy para o texto */
+  border: 1px solid rgba(10, 30, 60, 0.1);
+  border-radius: 50px;
+  padding: 4px 12px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.filter-chip:hover:not(.chip-vazio) {
+  background-color: #FFFFFF;
+  border-color: #32A0FF;
+  transform: translateY(-1px); /* Efeito de 'levantar' */
+  box-shadow: 0 4px 8px rgba(10, 30, 60, 0.12); /* Sombra mais profunda */
+}
+
+
+/* Estilo para o rótulo (ex: "UF:") */
+.filter-chip-label {
+  font-weight: 700;
+  margin-right: 5px;
+  color: #32A0FF; /* Azul destaque */
+}
+
+/* Ícone de fechar/remover (opcional, caso queira que o chip seja clicável) */
+.filter-chip-remove {
+  margin-left: 8px;
+  cursor: pointer;
+  color: #adb5bd;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.filter-chip-remove:hover {
+  color: rgb(10 30 60 / 80%);
+}
+
+/* Ajuste específico para o ícone de 'undo' no hover */
+.filter-chip-remove .fa-undo:hover {
+  transform: rotate(-45deg); /* Pequena animação de rotação */
+}
+
+/* Ajuste específico para garantir que os chips usem sua hierarquia de fontes */
+.filter-chip span {
+  /* Força a aplicação da sua lógica de media queries */
+  line-height: 1.2;
+}
+
+/* Estilo para quando o chip indica que 'nada' está selecionado */
+.filter-chip.chip-vazio {
+  background-color: rgba(255, 255, 255, 0.3); /* Mais transparente */
+  border: 1px dashed rgba(10, 30, 60, 0.2); /* Borda tracejada */
+  color: rgba(10, 30, 60, 0.5); /* Texto mais claro */
+  box-shadow: none;
+}
+
+.filter-chip.chip-vazio .filter-chip-label {
+  color: rgba(10, 30, 60, 0.6); /* Label menos chamativo */
+}
+
+/* Estilo para a exclamação que aparecerá em um input quando ele está vazio */
+.exclamacao-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background-color: red;
+  border-radius: 50%;
+  width: var(--fonte-muito-grande-size);
+  height: var(--fonte-muito-grande-size);
+  font-size: var(--fonte-aviso-size);    /* tamanho da exclamação */
+  font-weight: bold;
+  transform: translateY(40%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+
+/*------------------------------------*\
+  # Skeleton loader
+\*------------------------------------*/
+/* Estilo do Skeleton Chip - Versão com mais Contraste */
+.skeleton-chip {
+  height: 28px;
+  /* Base levemente mais escura para contrastar com o #EAF5FF do fundo */
+  background: linear-gradient(90deg, #dce8f2 25%, #f8fbff 50%, #dce8f2 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.2s infinite ease-in-out; /* Um pouco mais rápido e suave */
+
+  /* Removida a opacidade baixa para o chip ficar sólido */
+  opacity: 1;
+
+  /* Adicionada uma borda sutil para definir o formato do "pill" */
+  border: 1px solid rgba(10, 30, 60, 0.08) !important;
+  border-radius: 50px;
+
+  /* Sombra interna mínima para dar profundidade */
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+}
+
+@keyframes loading-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+#filtros_ativos_chips {
+  transition: opacity 0.3s ease-in-out;
 }

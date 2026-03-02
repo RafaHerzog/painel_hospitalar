@@ -28,7 +28,8 @@ df_cnes_100_nv <- df_total_nascidos |>
     categoria_nv = case_when(
       total_de_nascidos_vivos < 500 ~ "nv_menos_500",
       total_de_nascidos_vivos >= 500 & total_de_nascidos_vivos < 1000 ~ "nv_500_a_999",
-      total_de_nascidos_vivos >= 1000 ~ "nv_1000_mais"
+      total_de_nascidos_vivos >= 1000 & total_de_nascidos_vivos < 2000 ~ "nv_1000_a_1999",
+      total_de_nascidos_vivos >= 2000 ~ "nv_2000_mais",
     )
   )
 
@@ -43,6 +44,11 @@ df_cnes_lt_filtrado <- left_join(
   filter(!is.na(nome_fantasia)) |>
   mutate(
     # Se o tipo é NA, então o estabelecimento não aparece no SIH/SUS, apesar de ter partos. Logo, ele é privado
+    flag_privado = ifelse(
+      is.na(tipo),
+      1,
+      0
+    ),
     tipo = ifelse(
       is.na(tipo),
       "privado",
@@ -58,7 +64,8 @@ df_cnes_lt_filtrado <- left_join(
   ) |>
   mutate(
     categoria_porte = paste0(categoria_nv, "_", categoria_leitos_utin)
-  )
+  ) |>
+  arrange(CNES, CODUFMUN, ano, mes)
 
 ## Adicionando informações referentes ao município em que o estabelecimento se localiza
 ### Lendo uma base auxiliar de municípios
@@ -74,5 +81,4 @@ df_cnes_aux <- left_join(
   select(cnes, codufmun, nome_fantasia, municipio:macro_r_saude, mes, ano, tipo, categoria_porte, leitos_obstetricos:leitos_uti_neonatal)
 
 ### Salvando a base auxiliar
-write.csv(df_cnes_aux, "data-raw/csv/df_cnes_aux.csv", row.names = FALSE)
 write.csv(df_cnes_aux, "data-raw/extracao-dos-dados/databases/df_cnes_aux.csv", row.names = FALSE)

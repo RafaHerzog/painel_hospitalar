@@ -1,4 +1,7 @@
-.Rproj.user
-data-raw/extracao-dos-dados/databases/
-data-raw/extracao-dos-dados/databases_auxiliares/
-data-raw/extracao-dos-dados/morbidade/databases/
+databases*/
+.Rhistory
+.RData
+.Rproj.user/
+work.sqlite
+aihperm.csv
+aihpermtrans.csv

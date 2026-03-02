@@ -6,6 +6,24 @@ var openTab = function(tabName){
   });
 }
 
+$(document).on('hidden.bs.modal', '.modal', function () {
+    // Garante que o body recupere o scroll e remova classes de trava do Bootstrap
+    $('body').css({
+        'overflow': 'auto',
+        'height': 'auto',
+        'padding-right': '0'
+    }).removeClass('modal-open');
+
+    // Remove backdrops residuais que o Shiny às vezes deixa para trás
+    $('.modal-backdrop').remove();
+});
+
+// Impede que o clique nos botões redondos dê o "pulo" no href="#"
+$(document).on('click', '.circle-btn', function(e) {
+    e.preventDefault();
+});
+
+
 function atualizarTopCardEOverlay() {
   const divPlaceholder = document.querySelector(".div-placeholder");
   const baseAltura     = divPlaceholder ? divPlaceholder.clientHeight : 0;
@@ -21,7 +39,7 @@ function atualizarTopCardEOverlay() {
   document
     .querySelectorAll(".div-corta-card")
     .forEach(overlay => {
-      overlay.style.top = `${baseAltura + 62}px`;
+      overlay.style.top = `${baseAltura + 63}px`;
     });
 }
 
@@ -131,17 +149,6 @@ $(document).on('shiny:connected shiny:inputchanged', function(e){
 });
 
 
-$(document).ready(function() {
-      // seleciona o input correspondente ao valor 'agrupado'
-      var el = $('input[name=\"input_desejo_visualizar\"][value=\"agrupado\"]');
-      el.prop('disabled', true); // desabilita o radio
-      el.closest('label').css({
-        'color': 'gray',
-        'cursor': 'not-allowed'
-      }); // estiliza o label
-    });
-
-
 document.addEventListener("wheel", function(e) {
   const dropdown = e.target.closest(".vscomp-dropbox");
   if (dropdown) {
@@ -152,34 +159,56 @@ document.addEventListener("wheel", function(e) {
 }, { passive: true });
 
 
-if (window.VirtualSelect) {
-  VirtualSelect.prototype.scrollToActiveItem_ = function(){};
-}
 
+// Botão de filtros dos gráficos
+// 1. Abrir/Fechar ao clicar na DIV
+$(document).on('click', '.div-botao-filtros', function(e) {
 
-$(document).on('click', '.filter-icon', function(e) {
+  // Proteção: Se clicou dentro do conteúdo do dropdown (checkboxes), não faz nada
+  if ($(e.target).closest('.filter-dropdown').length) {
+    return;
+  }
+
   e.stopPropagation();
-  var menu = $(this).next('.filter-dropdown');
+
+  var $botao = $(this); // Guardamos a referência da div clicada
+  var menu = $botao.find('.filter-dropdown');
   var isOpen = menu.hasClass('show');
+
+  // Fecha outros dropdowns abertos e REMOVE a classe active deles
   $('.filter-dropdown.show').not(menu).each(function() {
     var that = $(this);
+    that.closest('.div-botao-filtros').removeClass('active'); // Remove brilho do outro botão
     that.removeClass('show').addClass('hide');
     setTimeout(function() { that.hide().removeClass('hide'); }, 150);
   });
+
   if (!isOpen) {
+    // ABRINDO: Adiciona classe 'active' no botão para manter o brilho
+    $botao.addClass('active');
+
     menu.show(0, function() {
       $(this).addClass('show');
     });
   } else {
+    // FECHANDO: Remove classe 'active'
+    $botao.removeClass('active');
+
     menu.removeClass('show').addClass('hide');
     setTimeout(function() { menu.hide().removeClass('hide'); }, 150);
   }
 });
 
+// 2. Fechar ao clicar fora
 $(document).on('click', function(e) {
-  if (!$(e.target).closest('.filter-dropdown, .filter-icon').length) {
+  if (!$(e.target).closest('.div-botao-filtros').length) {
+
     $('.filter-dropdown.show').each(function() {
       var menu = $(this);
+
+      // Remove a classe active do botão pai deste menu
+      menu.closest('.div-botao-filtros').removeClass('active');
+
       menu.removeClass('show').addClass('hide');
       setTimeout(function() { menu.hide().removeClass('hide'); }, 150);
     });
@@ -187,70 +216,128 @@ $(document).on('click', function(e) {
 });
 
 
+// Dropdown da navbar
 $(function() {
   $('.navbar .dropdown-toggle').off('click');
-  let hideTimerLevel1 = null;
-  let hideTimerLevel2 = null;
 
-  // --- Nível 1 ---
-  $('.navbar .dropdown').on('mouseenter', function() {
-    clearTimeout(hideTimerLevel1);
-    $(this).addClass('show');
-    $(this).children('.dropdown-menu').addClass('show');
-  }).on('mouseleave', function(e) {
-    const dropdown = $(this);
-    const related = e.relatedTarget;
-    if (related && ($(related).closest('.dropdown').is(dropdown) ||
-                    $(related).closest('.dropdown-submenu').length)) return;
-    hideTimerLevel1 = setTimeout(function() {
-      dropdown.removeClass('show');
-      dropdown.children('.dropdown-menu').removeClass('show');
-      dropdown.find('.dropdown-submenu').removeClass('show')
-              .children('.dropdown-menu').removeClass('show');
-    }, 180);
-  });
+  // Função para limpar os timers de todos os ancestrais
+  function clearParentTimers($el) {
+    $el.parents('.dropdown, .dropdown-submenu').each(function() {
+      clearTimeout($(this).data('hideTimer'));
+    });
+  }
 
-  // --- Nível 2 ---
-  $('.navbar').on('mouseenter', '.dropdown-submenu', function() {
-    clearTimeout(hideTimerLevel2);
-    $(this).siblings('.dropdown-submenu').removeClass('show')
-           .children('.dropdown-menu').removeClass('show');
-    $(this).addClass('show');
-    $(this).children('.dropdown-menu').addClass('show');
-  }).on('mouseleave', '.dropdown-submenu', function(e) {
-    const submenu = $(this);
-    const related = e.relatedTarget;
-    if (related && ($(related).closest('.dropdown-submenu').is(submenu) ||
-                    $(related).closest('.dropdown').length)) return;
-    hideTimerLevel2 = setTimeout(function() {
-      submenu.removeClass('show');
-      submenu.children('.dropdown-menu').removeClass('show');
-    }, 180);
-  });
+  // Lógica Unificada para Nível 1 e Submenus (Nível 2, 3...)
+  $('.navbar').on('mouseenter', '.dropdown, .dropdown-submenu', function(e) {
+    const $this = $(this);
 
-  // Clique em itens de segundo nível: seta input$navmenu e abre o bloco no sidebar
-  $('.navbar').on('click', '.dropdown-menu a[data-value]', function(e) {
-    e.preventDefault();
+    // 1. Limpa o timer do próprio elemento e de todos os pais
+    clearTimeout($this.data('hideTimer'));
+    clearParentTimers($this);
+
+    // 2. Mostra o menu atual
+    $this.addClass('show').children('.dropdown-menu').addClass('show');
+
+    // 3. Fecha submenus "irmãos" que ficaram abertos
+    $this.siblings().removeClass('show').find('.show').removeClass('show');
+
     e.stopPropagation();
+  }).on('mouseleave', '.dropdown, .dropdown-submenu', function(e) {
+    const $this = $(this);
+    const related = e.relatedTarget;
 
-    const val = $(this).attr('data-value');  // ex: 'indicadores_perfil_sociodemografico-porc_nvm_escolaridade'
+    // ESTRATÉGIA CRUCIAL: Se o mouse se moveu para dentro de QUALQUER
+    // descendente deste <li>, não inicia o timer de fechar.
+    if (related && $this[0].contains(related)) {
+      return;
+    }
 
-    // extrai tudo antes do último hífen como nome do bloco pai
+    // Inicia o timer para fechar
+    const timer = setTimeout(function() {
+      $this.removeClass('show').children('.dropdown-menu').removeClass('show');
+      // Se fechar o pai, garante que limpa todos os filhos
+      $this.find('.show').removeClass('show');
+    }, 300);
+
+    $this.data('hideTimer', timer);
+  });
+
+  // LÓGICA DE CLIQUE (Sua original, levemente otimizada)
+  $('.navbar').on('mousedown', '.dropdown-menu a[data-value]', function(e) {
+    e.stopPropagation();
+    const $mainParent = $(this).closest('.nav-item.dropdown');
+    const val = $(this).attr('data-value');
     const parent = val.includes('-') ? val.substring(0, val.lastIndexOf('-')) : val;
 
     if (typeof Shiny !== 'undefined') {
       Shiny.setInputValue('navmenu', val, {priority: 'event'});
     }
 
-    // Abre o tab correspondente no sidebar
-    const $side = $('.sidebar a[data-value=\"' + parent + '\"]');
+    const $side = $('.sidebar a[data-value="' + parent + '"]');
     if ($side.length) { $side[0].click(); }
 
-    // Fecha todos os menus abertos da navbar
-    $('.navbar .dropdown.show, .navbar .dropdown-submenu.show')
-      .removeClass('show')
-      .children('.dropdown-menu').removeClass('show');
+    $('.navbar .nav-item.dropdown').removeClass('active-parent');
+    $mainParent.addClass('active-parent');
 
-    return false;
+    // Fecha tudo instantaneamente após o clique
+    $('.navbar .show').removeClass('show');
+  });
+
+  // Mantendo o destaque dos botões circulares e abas simples
+  $('.navbar').on('click', '.nav-item:not(.dropdown) > .nav-link', function() {
+    $('.navbar .nav-item.dropdown').removeClass('active-parent');
+  });
+
+  $(document).on('click', '.circle-btn', function() {
+    $('.navbar .nav-item.dropdown').removeClass('active-parent');
+    $('.navbar .nav-item.dropdown').filter(function() {
+      return $(this).text().trim().includes("Indicadores");
+    }).addClass('active-parent');
   });
 });
+
+
+// Habilitando/desabilitando opções no input de comparações adicionais do gráfico de barras
+$(document).on('shiny:connected', function() {
+  // Função principal que gerencia o estado das caixinhas
+  function gerenciarConflitoComparacao() {
+    // 1. Pega o valor atual do Radio Button (Comparação Principal)
+    // O seletor [name$='...'] pega o input que TERMINA com aquele nome (ignora o ns)
+    var principal = $('input[name$=\"input_barras_comparacao_principal\"]:checked').val();
+
+    // 2. Itera sobre todos os Checkboxes (Comparações Adicionais)
+    $('input[name$=\"input_barras_comparacoes_adicionais\"]').each(function() {
+      var box = $(this);
+
+      // Se o valor do checkbox for igual ao selecionado no radio button
+      if (box.val() == principal) {
+
+        // Se estava marcado, desmarca e avisa o Shiny que mudou
+        if (box.prop('checked')) {
+          box.prop('checked', false);
+          box.trigger('change'); // Essencial para atualizar o input$ no R
+        }
+
+        // Desabilita a interação (fica cinza)
+        box.prop('disabled', true);
+        // Adicional: deixa o label visualmente desabilitado também (opcional)
+        box.closest('label').css('opacity', '0.5').css('cursor', 'not-allowed');
+
+      } else {
+        // Reabilita os outros casos
+        box.prop('disabled', false);
+        box.closest('label').css('opacity', '1').css('cursor', 'pointer');
+      }
+    });
+  }
+
+  // Executa a função toda vez que o Radio Button mudar
+  $(document).on('change', 'input[name$=\"input_barras_comparacao_principal\"]', function() {
+    gerenciarConflitoComparacao();
+  });
+
+  // Executa uma vez ao iniciar para garantir o estado inicial correto
+  // O setTimeout garante que o DOM do Shiny carregou
+  setTimeout(gerenciarConflitoComparacao, 100);
+});
+

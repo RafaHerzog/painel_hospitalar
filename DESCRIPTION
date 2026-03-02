@@ -12,6 +12,7 @@ Imports:
     bs4Dash,
     config,
     dplyr,
+    forcats,
     glue,
     golem,
     highcharter,
