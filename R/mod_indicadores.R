@@ -7,6 +7,93 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
+html_skeleton_calculo <- function() {
+  div(
+    class = "skeleton-card-wrapper skel-container-grid",
+    div(
+      class = "value-box-custom",
+      # Ícone (flex: 0 0 50px)
+      div(class = "skeleton-box skel-icon-circle"),
+      # Textos (flex: 1)
+      div(
+        class = "value-text",
+        div(class = "skeleton-box", style = "height: 12px; width: 30%; margin-bottom: 12px;"), # Título "CÁLCULO"
+        div(class = "skeleton-box", style = "height: 20px; width: 100%; margin-bottom: 8px; border-radius: 2px;"), # Texto 1
+        div(class = "skeleton-box", style = "height: 20px; width: 90%; margin-bottom: 8px; border-radius: 2px;"),  # Texto 2
+        div(class = "skeleton-box", style = "height: 20px; width: 60%; border-radius: 2px;")   # Texto 3
+      )
+    )
+  )
+}
+
+html_skeleton_fonte <- function() {
+  div(
+    class = "skeleton-card-wrapper skel-container-grid",
+    div(
+      class = "value-box-custom",
+      # Ícone
+      div(class = "skeleton-box skel-icon-circle"),
+      # Textos
+      div(
+        class = "value-text",
+        div(class = "skeleton-box", style = "height: 12px; width: 30%; margin-bottom: 12px;"), # Título "FONTE"
+        div(class = "skeleton-box", style = "height: 28px; width: 50%; margin-bottom: 10px; border-radius: 4px;"), # Texto Fonte (Maior)
+        div(class = "skeleton-box", style = "height: 14px; width: 40%; border-radius: 2px;")   # Texto Variável (Menor)
+      )
+    )
+  )
+}
+
+html_skeleton_completude <- function() {
+  div(
+    class = "skeleton-card-wrapper skel-container-grid",
+    div(
+      style = "width: 100%; display: flex; flex-direction: column;",
+      div(class = "skeleton-box", style = "height: 12px; width: 60%; margin-bottom: 20px;"), # Título
+      div(class = "skeleton-box", style = "height: 32px; width: 45%; margin-bottom: 12px; border-radius: 4px;"), # Status
+      div(class = "skeleton-box", style = "height: 14px; width: 55%; margin-bottom: 20px;"), # Texto descritivo
+      div(class = "skeleton-box", style = "height: 45px; width: 100%; margin-bottom: 25px; border-radius: 4px;"), # Gráfico
+      div(class = "skeleton-box", style = "height: 35px; width: 100%; border-radius: 4px;") # Botão
+    )
+  )
+}
+
+
+# Esqueleto para o Gráfico de Barras / Linhas
+html_skeleton_grafico <- function() {
+  div(
+    class = "skeleton-card-wrapper skel-container-grafico",
+
+    # Topo: Simula o título e o botão de filtros
+    div(
+      style = "display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 30px;",
+      div(class = "skeleton-box", style = "height: 25px; width: 40%;"), # Título grande
+      div(class = "skeleton-box", style = "height: 20px; width: 80px; border-radius: 15px;") # Botão de filtro fantasma
+    ),
+
+    # Eixo Y (Simulação)
+    div(
+      style = "display: flex; height: 100%; width: 100%; padding-left: 10px;",
+      div(
+        style = "display: flex; flex-direction: column; justify-content: space-between; height: 80%; width: 30px; margin-right: 15px;",
+        div(class = "skeleton-box", style = "height: 10px; width: 100%;"),
+        div(class = "skeleton-box", style = "height: 10px; width: 100%;"),
+        div(class = "skeleton-box", style = "height: 10px; width: 100%;"),
+        div(class = "skeleton-box", style = "height: 10px; width: 100%;")
+      ),
+
+      # Área do Gráfico (Simulando 5 colunas com alturas variadas)
+      div(
+        style = "display: flex; justify-content: space-around; align-items: flex-end; flex: 1; height: 80%; border-bottom: 2px solid #f6f7f8; padding-bottom: 5px;",
+        div(class = "skeleton-box", style = "height: 40%; width: 12%; border-radius: 4px 4px 0 0;"),
+        div(class = "skeleton-box", style = "height: 70%; width: 12%; border-radius: 4px 4px 0 0;"),
+        div(class = "skeleton-box", style = "height: 90%; width: 12%; border-radius: 4px 4px 0 0;"),
+        div(class = "skeleton-box", style = "height: 55%; width: 12%; border-radius: 4px 4px 0 0;"),
+        div(class = "skeleton-box", style = "height: 30%; width: 12%; border-radius: 4px 4px 0 0;")
+      )
+    )
+  )
+}
 mod_indicadores_ui <- function(id) {
   ns <- NS(id)
   tagList(
@@ -20,17 +107,34 @@ mod_indicadores_ui <- function(id) {
           solidHeader = TRUE,
           collapsible = FALSE,
           fluidRow(
+            # Caixa 1: Cálculo
             div(
               class = "col-12 col-xl-4",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_calculo"), width = "100%"), proxy.height = 250)
+              div(
+                style = "position: relative; width: 100%; min-height: 240px;", # Ajustado para bater com seu CSS real
+                html_skeleton_calculo(), # Novo skeleton específico
+                bs4Dash::valueBoxOutput(ns("vb_calculo"), width = "100%")
+              )
             ),
+
+            # Caixa 2: Fonte
             div(
               class = "col-12 col-xl-4",
-              shinycssloaders::withSpinner(bs4Dash::valueBoxOutput(ns("vb_fonte"), width = "100%"), proxy.height = 250)
+              div(
+                style = "position: relative; width: 100%; min-height: 240px;",
+                html_skeleton_fonte(), # Novo skeleton específico
+                bs4Dash::valueBoxOutput(ns("vb_fonte"), width = "100%")
+              )
             ),
+
+            # Caixa 3: Completude
             div(
               class = "col-12 col-xl-4",
-              shinycssloaders::withSpinner(uiOutput(ns("vb_completude")), proxy.height = 250)
+              div(
+                style = "position: relative; width: 100%; min-height: 240px;",
+                html_skeleton_completude(),
+                uiOutput(ns("vb_completude"))
+              )
             )
           )
         )
@@ -291,7 +395,11 @@ mod_indicadores_ui <- function(id) {
             status = "white",
             solidHeader = TRUE,
             collapsible = FALSE,
-            shinycssloaders::withSpinner(highcharter::highchartOutput(ns("barras_hc"), height = 500))
+            div(
+              style = "position: relative; width: 100%; min-height: 500px;", # 500px é o tamanho do seu hc
+              html_skeleton_grafico(), # Esqueleto logo após a div
+              highcharter::highchartOutput(ns("barras_hc"), height = 500)
+            )
           )
         )
       )
@@ -319,7 +427,11 @@ mod_indicadores_server <- function(id, filtros){
     })
 
     df_indicadores <- reactive({
-      get(paste0("df_", filtros()$input_bloco))
+      if (filtros()$input_bloco == "morbimortalidade_perinatal") {
+        get(paste0("df_", unique(df_infos_indicador()$sub_bloco)))
+      } else {
+        get(paste0("df_", filtros()$input_bloco))
+      }
     })
 
     df_incompletude_filtrado <- reactive({
@@ -451,7 +563,15 @@ mod_indicadores_server <- function(id, filtros){
       opacidade_banda <- if(is.na(res$agregado)) 0.03 else 0.08
 
       highcharter::highchart() |>
-        highcharter::hc_chart(type = "bar", height = 65, backgroundColor = "transparent", margin = c(5, 0, 25, 0)) |>
+        highcharter::hc_chart(
+          type = "bar",
+          # O segredo: Dizer ao Highcharts para herdar o tamanho do pai!
+          width = NULL,
+          height = NULL,
+          style = list(width = "100%", height = "100%"),
+          backgroundColor = "transparent",
+          margin = c(5, 0, 25, 0)
+        ) |>
         highcharter::hc_xAxis(visible = FALSE) |>
         highcharter::hc_yAxis(
           min = 0, max = 100, title = list(text = NULL),
@@ -480,21 +600,23 @@ mod_indicadores_server <- function(id, filtros){
           )
         ) |>
         highcharter::hc_tooltip(
-          useHTML = FALSE,      # Renderização nativa Highcharts (SVG)
+          useHTML = TRUE,      # Renderização nativa Highcharts (SVG)
           headerFormat = "",    # Remove o título automático
           outside = TRUE,       # Essencial para não ser cortado em gráficos pequenos (65px)
           shared = FALSE,
           style = list(color = "#0A1E3C"), # Azul escuro para sobriedade
           padding = 10,         # Respiro interno "Premium"
+          # pointFormat foca apenas no dado principal (o valor da completude)
+          pointFormat = "<span style=\"color:{point.color}\">\u25CF</span> <b>{point.y}%</b> de completude<br/>",
 
-          # O uso de \u2022 (bullet point menor) e \u25CF (bolinha da série)
-          pointFormat = paste0(
-            "<span style=\"color:{point.color}\">\u25CF</span> <b>{point.y}%</b> de completude<br/>",
-            "<br/>",
-            "<span style=\"color: #0A1E3Caa\">NÍVEIS DE COMPLETUDE:</span><br/>",
+          # footerFormat renderiza a legenda técnica com estilo reduzido
+          footerFormat = paste0(
+            "<div style=\"font-size: 0.85em; color: #0A1E3Caa; line-height: 1.4; margin-top: 8px; border-top: 1px solid #0A1E3C20; padding-top: 5px;\">",
+            "<b>NÍVEIS DE COMPLETUDE:</b><br/>",
             "\u2022 Excelente: acima de 95%<br/>",
             "\u2022 Boa: entre 90% e 95%<br/>",
-            "\u2022 Inadequada: abaixo de 90%"
+            "\u2022 Inadequada: abaixo de 90%",
+            "</div>"
           )
         ) |>
         highcharter::hc_add_series(
@@ -653,13 +775,26 @@ mod_indicadores_server <- function(id, filtros){
         class = "premium-card",
         div(
           class = "completude-box",
-          span(class = "label-caps fonte-media", "Completude da Informação"),
-          div(class = paste("completude-status fonte-destaque-caixas", status_class),
-              status_label,
-              if(!is.null(status_icon)) icon(status_icon, style = "font-size: 22px;")
+          # Usa Grid para forçar o limite de largura
+          style = "display: grid; grid-template-columns: minmax(0, 1fr); width: 100%;",
+
+          div( # Container interno para agrupar o texto
+            span(class = "label-caps fonte-media", "Completude da Informação"),
+            div(class = paste("completude-status fonte-destaque-caixas", status_class),
+                status_label,
+                if(!is.null(status_icon)) icon(status_icon, style = "font-size: 22px;")
+            ),
+            desc_html
           ),
-          desc_html,
-          conteudo_central,
+
+          # O Gráfico
+          div(
+            id = ns("hc_completude_wrapper"),
+            style = "width: 100%; height: 65px; margin-top: 5px; position: relative;",
+            conteudo_central
+          ),
+
+          # Botão (Se houver)
           if (exibir_botao) {
             div(style = "width: 100%; display: flex; justify-content: flex-start;",
                 actionButton(ns("btn_detalhes"),
@@ -698,8 +833,102 @@ mod_indicadores_server <- function(id, filtros){
       uf_sel <- filtros()$input_uf
       muni <- filtros()$input_municipio
       periodo <- filtros()$input_periodo
-      y_exprs <- df_infos_indicador()$calculo
 
+      # Capturamos os nomes das colunas existentes na base para validação
+      colunas_na_base <- names(df_base)
+
+
+      # 2. Lógica de adaptação dinâmica de fórmulas (PESO e MOMENTO)
+      ##' Função auxiliar para expandir colunas "todos" para a soma dos filtros selecionados
+      ##' @param formula_str A string original
+      ##' @param info_row A linha do df_infos_indicador contendo as flags de filtro
+      ##' @param colunas_validas Vetor com os nomes das colunas que realmente existem no df
+      ajustar_formula_filtros <- function(formula_str, info_row, colunas_validas) {
+        if (is.na(formula_str) || formula_str == "") return(formula_str)
+
+        pattern <- "(obitos|principais|evitaveis|nascidos_vivos)_[a-z0-9_]+"
+
+        stringr::str_replace_all(formula_str, pattern, function(match) {
+          partes <- stringr::str_split(match, "_")[[1]]
+          n <- length(partes)
+
+          # CASO 1: Nascidos Vivos (Trata apenas PESO)
+          if (stringr::str_starts(match, "nascidos_vivos")) {
+            peso_orig <- partes[n]
+            prefixo_base <- "nascidos_vivos"
+
+            pesos_expandidos <- if (isTRUE(info_row$filtro_peso) && peso_orig == "todos") {
+              filtros()$input_faixas_de_peso
+            } else {
+              peso_orig
+            }
+
+            novas_colunas <- paste(prefixo_base, pesos_expandidos, sep = "_")
+
+            # Validação: Se a coluna não existe, vira 0
+            novas_colunas <- ifelse(novas_colunas %in% colunas_validas, novas_colunas, "0")
+
+            return(paste0("(", paste(novas_colunas, collapse = " + "), ")"))
+          }
+
+          # CASO 2: Óbitos (Trata PESO e MOMENTO)
+          momento_orig <- partes[n]
+          peso_orig <- partes[n-1]
+          prefixo_base <- paste(partes[1:(n-2)], collapse = "_")
+
+          tipo_obito <- dplyr::case_when(
+            stringr::str_detect(match, "fetal|fetais") ~ "fetal",
+            stringr::str_detect(match, "neonat") ~ "neonatal",
+            stringr::str_detect(match, "perinat") ~ "perinatal",
+            TRUE ~ "fetal"
+          )
+
+          momentos_validos_tipo <- switch(tipo_obito,
+                                          "fetal" = c("sem_informacao", "antes", "durante"),
+                                          "neonatal" = c("0_dias", "1_a_6_dias", "7_a_27_dias"),
+                                          "perinatal" = c("sem_informacao", "antes", "durante", "0_dias", "1_a_6_dias")
+          )
+
+          pesos_expandidos <- if (isTRUE(info_row$filtro_peso) && peso_orig == "todos") {
+            filtros()$input_faixas_de_peso
+          } else {
+            peso_orig
+          }
+
+          momentos_expandidos <- if (isTRUE(info_row$filtro_momento) && momento_orig == "todos") {
+            intersect(filtros()$input_momentos_do_obito, momentos_validos_tipo)
+          } else {
+            momento_orig
+          }
+
+          if (length(momentos_expandidos) == 0) return("0")
+
+          combinacoes <- expand.grid(p = pesos_expandidos, m = momentos_expandidos, stringsAsFactors = FALSE)
+          novas_colunas <- paste(prefixo_base, combinacoes$p, combinacoes$m, sep = "_")
+
+          # VALIDAÇÃO CRUCIAL: Se a coluna não existe na base, substituímos por "0" na string
+          novas_colunas <- ifelse(novas_colunas %in% colunas_validas, novas_colunas, "0")
+
+          # Retornamos a soma das colunas expandidas (ou zeros) entre parênteses
+          paste0("(", paste(novas_colunas, collapse = " + "), ")")
+        })
+      }
+
+      # Aplicamos a adaptação passando o vetor colunas_na_base
+      df_infos_local <- df_infos_indicador() |>
+        dplyr::rowwise() |>
+        dplyr::mutate(
+          calculo = ajustar_formula_filtros(calculo, dplyr::pick(everything()), colunas_na_base),
+          numerador = ajustar_formula_filtros(numerador, dplyr::pick(everything()), colunas_na_base),
+          denominador = ajustar_formula_filtros(denominador, dplyr::pick(everything()), colunas_na_base)
+        ) |>
+        dplyr::ungroup()
+
+      # A partir daqui, y_exprs usará fórmulas seguras (Ex: "sum((0 + col_existente))")
+      y_exprs <- df_infos_local$calculo
+
+
+      # 3. Filtros temporais e geográficos
       ## Lógica para determinar a granularidade temporal
       data_inicio <- as.Date(periodo[1])
       data_fim <- as.Date(periodo[2])
@@ -726,7 +955,7 @@ mod_indicadores_server <- function(id, filtros){
         unique(df_cnes_aux$categoria_porte)
       }
 
-      # 2. Preparação da base geral (tratamento e filtros)
+      ## Preparação da base geral (tratamento e filtros)
       df_base <- df_base |>
         dplyr::mutate(
           # Criamos a data completa primeiro para filtrar o período corretamente
@@ -747,26 +976,26 @@ mod_indicadores_server <- function(id, filtros){
         dplyr::select(-data_aux)
 
 
-      # 3. Definição da função de cálculo dinâmico
+      # 4. Definição da função de cálculo dinâmico
       ##' Calcula métricas dinamicamente baseado nas fórmulas de df_infos_indicador
       ##' @param dataset O dataframe filtrado para o recorte geográfico
       ##' @param nome_coluna_valor O nome que a coluna de resultado deve ter (ex: 'br_porc')
       calcular_metricas <- function(dataset, nome_coluna_valor) {
-        # 1. Extração de fórmulas
-        formulas_numeradores <- df_infos_indicador()$numerador
-        formula_denominador  <- df_infos_indicador()$denominador[1]
+        # 1. Extração de fórmulas já adaptadas
+        formulas_numeradores <- df_infos_local$numerador
+        formula_denominador  <- df_infos_local$denominador[1]
         soma_numeradores_str <- paste(formulas_numeradores, collapse = " + ")
 
         formula_sem_info_str <- glue::glue(
           "round( pmax(0, {formula_denominador} - ({soma_numeradores_str})) / {formula_denominador} * 100, 1)"
         )
 
-        # 2. Categorias existentes (Garantindo character)
-        lista_resultados <- lapply(seq_len(nrow(df_infos_indicador())), function(i) {
+        # 2. Categorias existentes
+        lista_resultados <- lapply(seq_len(nrow(df_infos_local)), function(i) {
           dataset |>
             dplyr::group_by(data_ref) |>
-            dplyr::summarise(valor = !!rlang::parse_expr(df_infos_indicador()$calculo[i]), .groups = "drop") |>
-            dplyr::mutate(categoria_sub_indicador = as.character(df_infos_indicador()$categoria_sub_indicador[i]))
+            dplyr::summarise(valor = !!rlang::parse_expr(df_infos_local$calculo[i]), .groups = "drop") |>
+            dplyr::mutate(categoria_sub_indicador = as.character(df_infos_local$categoria_sub_indicador[i]))
         })
 
         # 3. Categoria "Sem informação"
@@ -779,7 +1008,8 @@ mod_indicadores_server <- function(id, filtros){
           dplyr::rename(!!nome_coluna_valor := valor)
       }
 
-      # 4. Criação das bases para cada nível de análise
+
+      # 5. Criação das bases para cada nível de análise
       ## Nível 1: Hospital selecionado
       df_sel <- df_base |>
         dplyr::filter(
@@ -819,7 +1049,8 @@ mod_indicadores_server <- function(id, filtros){
       ## Nível 6: Brasil
       df_br <- df_outros
 
-      # 5. Execução dos cálculos
+
+      # 6. Execução dos cálculos
       ## Calculando para o hospital selecionado e adicionando a classe identificadora
       res_hosp <- calcular_metricas(df_sel, "porc") |>
         dplyr::mutate(class = "Hospital selecionado")
@@ -831,7 +1062,8 @@ mod_indicadores_server <- function(id, filtros){
       res_uf <- calcular_metricas(df_uf, "uf_porc")
       res_br <- calcular_metricas(df_br, "br_porc")
 
-      # 6. Unificação final
+
+      # 7. Unificação final
       df_final <- res_br |>
         dplyr::left_join(res_hosp, by = c("data_ref", "categoria_sub_indicador")) |>
         dplyr::left_join(res_uf, by = c("data_ref", "categoria_sub_indicador")) |>
@@ -950,17 +1182,26 @@ mod_indicadores_server <- function(id, filtros){
       txt_comps_adicionais <- ""
 
       if (!is.null(comps_adicionais) && length(comps_adicionais) > 0) {
-        # Evita duplicidade se a adicional for igual à principal
         comps_extras <- setdiff(comps_adicionais, comp_principal)
 
         if (length(comps_extras) > 0) {
           txt_comps_adicionais <- paste0(
             vapply(comps_extras, function(k) {
-              glue::glue("<br> &emsp;{dict_labels[[k]]}: {{point.{dict_cols[[k]]}:.1f}}%")
+              # Lógica: se a coluna existir (não for null/NA), mostra o valor. Senão, N/A
+              glue::glue("<br> &emsp;{dict_labels[[k]]}: {{#if point.{dict_cols[[k]]}}} {{point.{dict_cols[[k]]}:.1f}}% {{else}} N/A {{/if}}")
             }, character(1)),
             collapse = ""
           )
         }
+      }
+
+      ## Adicionando a mensagem de filtro ativo
+      tooltip_alerta_filtro <- if (restringir_natureza | restringir_categoria) {
+        glue::glue("<br><br><span style='font-size: 0.85em; color: #888888; font-style: italic;'>
+                   FILTRO ATIVO: comparações restringidas a hospitais de mesma {ifelse(restringir_natureza, 'natureza', '')}{ifelse(restringir_natureza & restringir_categoria, ' e ', '')}{ifelse(restringir_categoria, 'categoria', '')}
+                   </span>")
+      } else {
+        ""
       }
 
       ## Passo B: Montar a tooltip da série 1 (hospital selecionado)
@@ -972,6 +1213,7 @@ mod_indicadores_server <- function(id, filtros){
           <span style='font-size: 0.95em; opacity: 0.95'>
             &emsp;{lbl_principal}: {{point.{col_principal}:.1f}}%{txt_comps_adicionais}
           </span>
+          {tooltip_alerta_filtro}
         </div>"
       )
 
@@ -983,6 +1225,7 @@ mod_indicadores_server <- function(id, filtros){
           <span style='font-size: 0.95em; opacity: 0.95'>
             {{point.hosp_line}}{txt_comps_adicionais}
           </span>
+          {tooltip_alerta_filtro}
         </div>"
       )
 
@@ -1146,13 +1389,87 @@ mod_indicadores_server <- function(id, filtros){
 
       req(filtros()$input_desejo_visualizar == "individual")
 
+      # 1. Configuração e extração de parâmetros
       df_base <- df_indicadores()
       hosp <- filtros()$input_hospital
       uf_sel <- filtros()$input_uf
       muni <- filtros()$input_municipio
       periodo <- filtros()$input_periodo
-      y_expr <- df_infos_indicador()$calculo
 
+
+      # 2. Lógica de adaptação dinâmica da fórmula (PESO e MOMENTO)
+      ##' Função auxiliar para expandir colunas "todos"
+      ajustar_formula_filtros <- function(formula_str, info_row) {
+        if (is.na(formula_str) || formula_str == "") return(formula_str)
+
+        # Regex expandido para incluir nascidos_vivos
+        pattern <- "(obitos|principais|evitaveis|nascidos_vivos)_[a-z0-9_]+"
+
+        stringr::str_replace_all(formula_str, pattern, function(match) {
+          partes <- stringr::str_split(match, "_")[[1]]
+          n <- length(partes)
+
+          # CASO 1: Nascidos Vivos (Trata apenas PESO)
+          if (stringr::str_starts(match, "nascidos_vivos")) {
+            peso_orig <- partes[n] # O peso é o último segmento (ex: "todos")
+            prefixo_base <- "nascidos_vivos"
+
+            pesos_expandidos <- if (isTRUE(info_row$filtro_peso) && peso_orig == "todos") {
+              filtros()$input_faixas_de_peso
+            } else {
+              peso_orig
+            }
+
+            novas_colunas <- paste(prefixo_base, pesos_expandidos, sep = "_")
+            return(paste0("(", paste(novas_colunas, collapse = " + "), ")"))
+          }
+
+          # CASO 2: Óbitos (Trata PESO e MOMENTO)
+          # Por padrão, os dois últimos segmentos são sempre PESO e MOMENTO
+          momento_orig <- partes[n]
+          peso_orig <- partes[n-1]
+          prefixo_base <- paste(partes[1:(n-2)], collapse = "_")
+
+          tipo_obito <- dplyr::case_when(
+            stringr::str_detect(match, "fetal|fetais") ~ "fetal",
+            stringr::str_detect(match, "neonat") ~ "neonatal",
+            stringr::str_detect(match, "perinat") ~ "perinatal",
+            TRUE ~ "fetal"
+          )
+
+          momentos_validos_tipo <- switch(tipo_obito,
+                                          "fetal" = c("sem_informacao", "antes", "durante"),
+                                          "neonatal" = c("0_dias", "1_a_6_dias", "7_a_27_dias"),
+                                          "perinatal" = c("sem_informacao", "antes", "durante", "0_dias", "1_a_6_dias")
+          )
+
+          pesos_expandidos <- if (isTRUE(info_row$filtro_peso) && peso_orig == "todos") {
+            filtros()$input_faixas_de_peso
+          } else {
+            peso_orig
+          }
+
+          momentos_expandidos <- if (isTRUE(info_row$filtro_momento) && momento_orig == "todos") {
+            intersect(filtros()$input_momentos_do_obito, momentos_validos_tipo)
+          } else {
+            momento_orig
+          }
+
+          if (length(momentos_expandidos) == 0) return("0")
+
+          combinacoes <- expand.grid(p = pesos_expandidos, m = momentos_expandidos, stringsAsFactors = FALSE)
+          novas_colunas <- paste(prefixo_base, combinacoes$p, combinacoes$m, sep = "_")
+
+          return(paste0("(", paste(novas_colunas, collapse = " + "), ")"))
+        })
+      }
+
+      ## Adaptamos a fórmula de cálculo baseada nos filtros de peso e momento
+      ## Usamos a primeira linha do df_infos_indicador pois o desejo é "individual"
+      y_expr <- ajustar_formula_filtros(df_infos_indicador()$calculo[1], df_infos_indicador()[1, ])
+
+
+      # 3. Filtros de Natureza e Categoria
       naturezas <- if (input$input_linhas_restringir_natureza == TRUE) {
         filtros()$input_natureza
       } else {
@@ -1169,6 +1486,8 @@ mod_indicadores_server <- function(id, filtros){
         unique(df_cnes_aux$categoria_porte)
       }
 
+
+      # 4. Preparação da base e cálculo por nível
       df_base <- df_base |>
         dplyr::mutate(data_ref = as.Date(paste0(ano, "-", sprintf("%02d", mes), "-01"))) |>
         dplyr::filter(
@@ -1181,15 +1500,16 @@ mod_indicadores_server <- function(id, filtros){
         uf == uf_sel
       )
 
+      ## Cálculo para o hospital selecionado
       df_sel_line <- df_sel |>
         dplyr::group_by(data_ref) |>
         dplyr::summarise(y = mean(base::eval(base::parse(text = y_expr))), .groups = "drop")
 
-      # salvar hospital
+      ## Salvar hospital
       bases_medias$hospital <- df_sel_line |>
         dplyr::transmute(x = data_ref, y = y)
 
-      # Função auxiliar de média
+      ## Função auxiliar de média
       calc_media <- function(filtro) {
         df_base |>
           dplyr::filter(tipo %in% naturezas, categoria_porte %in% categorias) |>
@@ -1198,15 +1518,12 @@ mod_indicadores_server <- function(id, filtros){
           dplyr::summarise(y = mean(base::eval(base::parse(text = y_expr))), .groups = "drop")
       }
 
-      # salvar médias
+      ## Salvar médias para os níveis comparativos
       bases_medias$municipio <- calc_media(function(d) dplyr::filter(d, municipio == muni & uf == uf_sel))
       bases_medias$macro_rsaude <- calc_media(function(d) dplyr::filter(d, macro_r_saude == unique(df_sel$macro_r_saude)[1] & uf == uf_sel))
       bases_medias$rsaude <- calc_media(function(d) dplyr::filter(d, r_saude == unique(df_sel$r_saude)[1] & uf == uf_sel))
       bases_medias$uf <- calc_media(function(d) dplyr::filter(d, .data$uf == uf_sel))
-      # bases_medias$publicos <- calc_media(function(d) dplyr::filter(d, tipo == "publico"))
-      # bases_medias$privados <- calc_media(function(d) dplyr::filter(d, tipo == "privado"))
-      # bases_medias$mistos <- calc_media(function(d) dplyr::filter(d, tipo == "misto"))
-      bases_medias$pais <- calc_media(function(d) d)  # média nacional (sem filtro)
+      bases_medias$pais <- calc_media(function(d) d)  # média nacional (sem filtro geográfico)
     }, ignoreNULL = FALSE, ignoreInit = FALSE)
 
 
@@ -1262,6 +1579,17 @@ mod_indicadores_server <- function(id, filtros){
         ''
       }
 
+      ## STRING DO FILTRO PARA O GRÁFICO DE LINHAS (NOVO)
+      # No gráfico de linhas a tooltip é 'shared = TRUE', então o ideal é
+      # colocar o alerta no rodapé da tooltip, usando o 'footerFormat'
+      tooltip_alerta_filtro_linha <- if (restringir_natureza | restringir_categoria) {
+        glue::glue("<br><span style='font-size: 0.85em; color: #888888; font-style: italic;'>
+                   FILTRO ATIVO: comparações restringidas a hospitais de mesma {ifelse(restringir_natureza, 'natureza', '')}{ifelse(restringir_natureza & restringir_categoria, ' e ', '')}{ifelse(restringir_categoria, 'categoria', '')}
+                   </span>")
+      } else {
+        ""
+      }
+
       hc <- highcharter::highchart() |>
         highcharter::hc_add_dependency("modules/series-label.js") |>
         highcharter::hc_chart(type = "line") |>
@@ -1295,7 +1623,8 @@ mod_indicadores_server <- function(id, filtros){
           pointFormat = paste0(
             "<span style='color:{point.color}'>&#9679;</span> ",
             "<b>{series.name}:</b> {point.y}", y_suffix, "<br>"
-          )
+          ),
+          footerFormat = tooltip_alerta_filtro_linha
         )
 
       # Linha do hospital sempre
@@ -1347,7 +1676,7 @@ mod_indicadores_server <- function(id, filtros){
       }
 
       # Aplicar paleta de cores
-      cores <- c("#0A1E3C", "rgba(50,160,255,0.7)", "rgba(65,190,60,0.7)", "rgb(250, 200, 15, 1)")
+      cores <- c("#0A1E3C", "rgba(50,160,255,0.6)", "rgba(65,190,60,0.6)", "rgb(250, 200, 15, 0.6)")
       hc |> highcharter::hc_colors(cores)
     })
 
@@ -1383,10 +1712,79 @@ mod_indicadores_server <- function(id, filtros){
       if (modo == "mes" && !is.null(bases_scatter$mes_sel)) return(invisible())
       if (modo == "periodo" && !is.null(bases_scatter$periodo_sel)) return(invisible())
 
-      info <- df_infos_indicador()
-      x_expr <- info$denominador
-      y_expr <- info$calculo
+      # 1. Lógica de adaptação dinâmica da fórmula (PESO e MOMENTO)
 
+      ##' Função auxiliar para expandir colunas "todos"
+      ajustar_formula_filtros <- function(formula_str, info_row) {
+        if (is.na(formula_str) || formula_str == "") return(formula_str)
+
+        pattern <- "(obitos|principais|evitaveis|nascidos_vivos)_[a-z0-9_]+"
+
+        stringr::str_replace_all(formula_str, pattern, function(match) {
+          partes <- stringr::str_split(match, "_")[[1]]
+          n <- length(partes)
+
+          # CASO 1: Nascidos Vivos
+          if (stringr::str_starts(match, "nascidos_vivos")) {
+            peso_orig <- partes[n]
+            prefixo_base <- "nascidos_vivos"
+
+            pesos_expandidos <- if (isTRUE(info_row$filtro_peso) && peso_orig == "todos") {
+              filtros()$input_faixas_de_peso
+            } else {
+              peso_orig
+            }
+
+            novas_colunas <- paste(prefixo_base, pesos_expandidos, sep = "_")
+            return(paste0("(", paste(novas_colunas, collapse = " + "), ")"))
+          }
+
+          # CASO 2: Óbitos
+          momento_orig <- partes[n]
+          peso_orig <- partes[n-1]
+          prefixo_base <- paste(partes[1:(n-2)], collapse = "_")
+
+          tipo_obito <- dplyr::case_when(
+            stringr::str_detect(match, "fetal|fetais") ~ "fetal",
+            stringr::str_detect(match, "neonat") ~ "neonatal",
+            stringr::str_detect(match, "perinat") ~ "perinatal",
+            TRUE ~ "fetal"
+          )
+
+          momentos_validos_tipo <- switch(tipo_obito,
+                                          "fetal" = c("sem_informacao", "antes", "durante"),
+                                          "neonatal" = c("0_dias", "1_a_6_dias", "7_a_27_dias"),
+                                          "perinatal" = c("sem_informacao", "antes", "durante", "0_dias", "1_a_6_dias")
+          )
+
+          pesos_expandidos <- if (isTRUE(info_row$filtro_peso) && peso_orig == "todos") {
+            filtros()$input_faixas_de_peso
+          } else {
+            peso_orig
+          }
+
+          momentos_expandidos <- if (isTRUE(info_row$filtro_momento) && momento_orig == "todos") {
+            intersect(filtros()$input_momentos_do_obito, momentos_validos_tipo)
+          } else {
+            momento_orig
+          }
+
+          if (length(momentos_expandidos) == 0) return("0")
+
+          combinacoes <- expand.grid(p = pesos_expandidos, m = momentos_expandidos, stringsAsFactors = FALSE)
+          novas_colunas <- paste(prefixo_base, combinacoes$p, combinacoes$m, sep = "_")
+
+          return(paste0("(", paste(novas_colunas, collapse = " + "), ")"))
+        })
+      }
+
+      info <- df_infos_indicador()
+      # Adaptamos as fórmulas de numerador (denominador) e cálculo antes de prosseguir
+      # Usamos as flags da primeira linha (individual)
+      x_expr_raw <- ajustar_formula_filtros(info$denominador[1], info[1, ])
+      y_expr_raw <- ajustar_formula_filtros(info$calculo[1], info[1, ])
+
+      # 2. Configuração de parâmetros e bases
       hosp <- filtros()$input_hospital
       uf_in <- filtros()$input_uf
       muni_in <- filtros()$input_municipio
@@ -1394,7 +1792,6 @@ mod_indicadores_server <- function(id, filtros){
       macro_rsaude <- filtros()$input_macro_r_saude
       regiao <- filtros()$input_regiao_pais
 
-      # Base com data_ref
       df_base <- df_indicadores() |>
         dplyr::mutate(
           data_ref = as.Date(paste0(ano, "-", sprintf("%02d", mes), "-01"))
@@ -1418,7 +1815,7 @@ mod_indicadores_server <- function(id, filtros){
           )
       }
 
-      # Seleção direta do hospital (sem normalização)
+      # Seleção direta do hospital
       df_sel <- dplyr::filter(
         df_use,
         nome_fantasia %in% hosp,
@@ -1429,14 +1826,28 @@ mod_indicadores_server <- function(id, filtros){
         !(nome_fantasia %in% hosp & uf == uf_in)
       )
 
-      # Pré-compila expressões para cálculo (evita parse repetido)
-      x_expr_parsed <- base::parse(text = gsub("sum\\(([^\\)]+)\\)", "\\1", x_expr))
-      y_expr_parsed <- base::parse(text = gsub("sum\\(([^\\)]+)\\)", "\\1", y_expr))
+      # 3. Preparação das expressões para o Scatterplot
+      # O segredo aqui é:
+      # 1. Primeiro expandimos a fórmula (já feito em x_expr_raw e y_expr_raw)
+      # 2. Depois removemos o sum() para que o cálculo funcione por linha/hospital
+
+      limpar_sum <- function(expr) {
+        # Remove sum(...) mas mantém o conteúdo interno
+        # Ex: sum((col1 + col2)) vira (col1 + col2)
+        stringr::str_replace_all(expr, "sum\\(([^\\)]+)\\)", "\\1")
+      }
+
+      x_expr_final <- limpar_sum(x_expr_raw)
+      y_expr_final <- limpar_sum(y_expr_raw)
+
+      # Pré-compila expressões para cálculo
+      x_expr_parsed <- base::parse(text = x_expr_final)
+      y_expr_parsed <- base::parse(text = y_expr_final)
 
       x_eval <- function(df) base::eval(x_expr_parsed, envir = df)
       y_eval <- function(df) base::eval(y_expr_parsed, envir = df)
 
-      # Monta data.frames finais
+      # 4. Montagem dos data.frames finais
       prep_points <- function(df) {
         if (nrow(df) == 0) return(df)
         x_vals <- x_eval(df)
